@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SIKHANE-TECH — Générateur Mikrotik Sénégal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  :root {
+    --bg: #0a0e0c; --bg-2: #0f1411; --panel: #131815; --panel-2: #1a201c;
+    --line: #1f2622; --line-2: #2a332d;
+    --ink: #e6efe8; --ink-dim: #8a9690; --ink-faint: #4a544f;
+    --green: #46d97c; --green-dim: #2a7d4a;
+    --yellow: #f5c542; --red: #e8533f;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --serif: 'Fraunces', Georgia, serif;
+    --sans: 'Geist', system-ui, sans-serif;
+  }
+  html, body { background: var(--bg); color: var(--ink); font-family: var(--sans); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(circle at 20% 10%, rgba(70,217,124,0.06), transparent 40%), radial-gradient(circle at 90% 80%, rgba(245,197,66,0.04), transparent 40%); pointer-events: none; z-index: 0; }
+  body::after { content: ''; position: fixed; inset: 0; background-image: linear-gradient(rgba(70,217,124,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(70,217,124,0.025) 1px, transparent 1px); background-size: 32px 32px; pointer-events: none; z-index: 0; }
+  .app { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 0 0 120px; }
+
+  header { padding: 24px 20px 18px; border-bottom: 1px solid var(--line); background: linear-gradient(180deg, var(--bg-2), var(--bg)); position: sticky; top: 0; z-index: 10; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .logo { width: 42px; height: 42px; border: 1px solid var(--green-dim); background: radial-gradient(circle at 30% 30%, rgba(70,217,124,0.35), transparent 60%), var(--panel); display: grid; place-items: center; position: relative; overflow: hidden; }
+  .logo svg { width: 22px; height: 22px; }
+  .logo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(120deg, transparent 40%, rgba(70,217,124,0.15) 50%, transparent 60%); animation: shine 4s infinite; }
+  @keyframes shine { 0%, 100% { transform: translateX(-100%); } 50% { transform: translateX(100%); } }
+  .brand h1 { font-family: var(--serif); font-weight: 800; font-size: 22px; letter-spacing: -0.02em; line-height: 1; }
+  .brand h1 em { font-style: italic; font-weight: 400; color: var(--yellow); }
+  .brand .sub { font-family: var(--mono); font-size: 10px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.18em; margin-top: 4px; }
+  .status-bar { margin-top: 16px; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 10px; color: var(--ink-faint); text-transform: uppercase; letter-spacing: 0.12em; }
+  .status-bar .dot { display: inline-block; width: 6px; height: 6px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); animation: pulse 2s infinite; margin-right: 6px; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .hero { padding: 28px 20px 8px; }
+  .eyebrow { font-family: var(--mono); font-size: 10px; color: var(--green); text-transform: uppercase; letter-spacing: 0.25em; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--green); }
+  h2.title { font-family: var(--serif); font-weight: 800; font-size: clamp(34px, 9vw, 48px); line-height: 0.95; letter-spacing: -0.035em; }
+  h2.title em { font-style: italic; font-weight: 400; color: var(--yellow); }
+  .lede { color: var(--ink-dim); font-size: 14px; line-height: 1.55; margin-top: 16px; max-width: 480px; }
+  .badge-line { display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; }
+  .badge { font-family: var(--mono); font-size: 9.5px; padding: 6px 10px; border: 1px solid var(--line-2); color: var(--ink-dim); letter-spacing: 0.1em; text-transform: uppercase; border-radius: 2px; background: var(--panel); }
+  .badge.on { color: var(--green); border-color: var(--green-dim); background: rgba(70,217,124,0.05); }
+
+  section.card { margin: 16px 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 2px; overflow: hidden; position: relative; }
+  section.card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--green); transform: scaleY(0); transform-origin: top; transition: 0.4s; }
+  section.card.touched::before { transform: scaleY(1); }
+  .card-head { padding: 18px 20px; border-bottom: 1px solid var(--line); }
+  .card-num { font-family: var(--mono); font-size: 10px; color: var(--green); letter-spacing: 0.2em; }
+  .card-title { font-family: var(--serif); font-size: 19px; font-weight: 600; letter-spacing: -0.015em; margin-top: 4px; }
+  .card-desc { font-size: 12px; color: var(--ink-dim); margin-top: 6px; line-height: 1.5; }
+  .card-body { padding: 18px 20px 22px; }
+
+  .field { margin-bottom: 18px; }
+  .field:last-child { margin-bottom: 0; }
+  label { display: block; font-family: var(--mono); font-size: 10px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; }
+  label .req { color: var(--yellow); }
+  label .hint { color: var(--ink-faint); text-transform: none; letter-spacing: 0.02em; font-size: 11px; margin-left: 6px; }
+  input[type="text"], input[type="number"], input[type="password"], textarea, select {
+    width: 100%; background: var(--bg); border: 1px solid var(--line-2); color: var(--ink);
+    padding: 14px; font-family: var(--mono); font-size: 14px; border-radius: 2px;
+    outline: none; transition: 0.2s; -webkit-appearance: none;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--green); background: var(--panel-2); box-shadow: 0 0 0 3px rgba(70,217,124,0.08); }
+  input::placeholder { color: var(--ink-faint); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 380px) { .row { grid-template-columns: 1fr; } }
+
+  .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--line); }
+  .toggle-row:last-child { border-bottom:none; }
+  .toggle-row .label-strong { font-size:13px; font-weight:500; color:var(--ink); }
+  .toggle-row .label-sub { font-size:11px; color:var(--ink-dim); font-family:var(--mono); margin-top:2px; }
+  .toggle { width:44px; height:24px; background:var(--line-2); border-radius:12px; position:relative; cursor:pointer; transition:0.2s; flex-shrink:0; }
+  .toggle::after { content:''; position:absolute; top:2px; left:2px; width:20px; height:20px; background:var(--ink-dim); border-radius:50%; transition:0.2s; }
+  .toggle[data-on="true"] { background:rgba(70,217,124,0.2); }
+  .toggle[data-on="true"]::after { left:22px; background:var(--green); }
+
+  /* Profil tickets — style "carte" */
+  .profile { background: var(--bg); border: 1px solid var(--line-2); border-radius: 2px; padding: 14px; margin-bottom: 10px; position: relative; }
+  .profile-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .profile-tag { font-family: var(--mono); font-size: 10px; color: var(--green); background: rgba(70,217,124,0.08); padding: 4px 8px; border-radius: 2px; letter-spacing: 0.1em; }
+  .profile-del { background:none; border:1px solid var(--line-2); color:var(--red); width:28px; height:28px; cursor:pointer; font-family:var(--mono); border-radius:2px; font-size:14px; }
+  .profile-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .profile-row input { padding: 9px 10px; font-size: 12px; }
+  .profile-row .mini-label { font-size:9px; color:var(--ink-faint); font-family:var(--mono); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px; display:block; }
+  .add-profile { margin-top: 12px; width: 100%; background: transparent; border: 1px dashed var(--line-2); color: var(--ink-dim); padding: 12px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 2px; }
+  .add-profile:active { background: var(--panel-2); }
+
+  .generate-wrap { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px 24px; background: linear-gradient(180deg, transparent, var(--bg) 30%); z-index: 20; }
+  .generate-wrap .inner { max-width: 720px; margin: 0 auto; }
+  .btn-primary { width: 100%; background: var(--green); color: #001008; border: none; padding: 18px; font-family: var(--mono); font-size: 13px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: 0.2s; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary .arrow { margin-left: 8px; display: inline-block; transition: 0.2s; }
+  .btn-primary:hover .arrow { transform: translateX(4px); }
+
+  .output { position: fixed; inset: 0; background: var(--bg); z-index: 100; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); overflow-y: auto; }
+  .output.open { transform: translateY(0); }
+  .output-inner { max-width: 720px; margin: 0 auto; padding: 24px 20px 100px; }
+  .output-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  .output-head h3 { font-family: var(--serif); font-size: 26px; font-weight: 800; letter-spacing: -0.02em; line-height: 1; }
+  .output-head .eyebrow { margin-bottom: 8px; }
+  .output-close { background: var(--panel); border: 1px solid var(--line-2); color: var(--ink); width: 40px; height: 40px; font-family: var(--mono); font-size: 18px; cursor: pointer; border-radius: 2px; }
+  .config-meta { background: var(--panel); border: 1px solid var(--line); padding: 14px 16px; margin-bottom: 16px; font-family: var(--mono); font-size: 11px; color: var(--ink-dim); }
+  .config-meta div { display: flex; justify-content: space-between; padding: 3px 0; gap: 8px; }
+  .config-meta span:last-child { color: var(--green); text-align: right; word-break: break-all; }
+  .code-block { background: #050807; border: 1px solid var(--line); padding: 16px; font-family: var(--mono); font-size: 11px; line-height: 1.6; color: #b8c5be; overflow-x: auto; white-space: pre; max-height: 55vh; overflow-y: auto; border-radius: 2px; }
+  .code-block .c-cmd { color: var(--green); }
+  .code-block .c-str { color: var(--yellow); }
+  .code-block .c-com { color: var(--ink-faint); font-style: italic; }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .btn-sec { background: var(--panel); border: 1px solid var(--line-2); color: var(--ink); padding: 14px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 2px; }
+  .btn-sec:active { background: var(--panel-2); }
+  .btn-sec.copied { background: rgba(70,217,124,0.12); border-color: var(--green); color: var(--green); }
+
+  footer { padding: 40px 20px 24px; font-family: var(--mono); font-size: 10px; color: var(--ink-faint); text-align: center; letter-spacing: 0.1em; text-transform: uppercase; }
+  footer .flag { display: inline-block; margin: 0 6px; width: 12px; height: 8px; background: linear-gradient(90deg, #00853f 33%, #fdef42 33% 66%, #e31b23 66%); vertical-align: middle; }
+
+  @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  section.card { animation: slideUp 0.5s ease-out backwards; }
+  section.card:nth-child(1) { animation-delay: 0.05s; }
+  section.card:nth-child(2) { animation-delay: 0.1s; }
+  section.card:nth-child(3) { animation-delay: 0.15s; }
+  section.card:nth-child(4) { animation-delay: 0.2s; }
+
+  /* ===== LOGIN SCREEN ===== */
+  .auth-screen { position: fixed; inset: 0; z-index: 1000; background: var(--bg); display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .auth-screen.hidden { display: none; }
+  .auth-box { width: 100%; max-width: 400px; background: var(--panel); border: 1px solid var(--line); padding: 32px 24px; border-radius: 2px; position: relative; }
+  .auth-box::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--green); }
+  .auth-logo { width: 56px; height: 56px; border: 1px solid var(--green-dim); background: radial-gradient(circle at 30% 30%, rgba(70,217,124,0.35), transparent 60%), var(--bg-2); display: grid; place-items: center; margin: 0 auto 20px; }
+  .auth-logo svg { width: 28px; height: 28px; }
+  .auth-title { font-family: var(--serif); font-size: 28px; font-weight: 800; letter-spacing: -0.02em; text-align: center; margin-bottom: 4px; }
+  .auth-title em { font-style: italic; font-weight: 400; color: var(--yellow); }
+  .auth-sub { font-family: var(--mono); font-size: 10px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.18em; text-align: center; margin-bottom: 28px; }
+  .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; background: var(--bg); border: 1px solid var(--line-2); border-radius: 2px; margin-bottom: 20px; overflow: hidden; }
+  .auth-tab { padding: 12px; font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-dim); cursor: pointer; text-align: center; border: none; background: transparent; transition: 0.2s; }
+  .auth-tab.active { background: rgba(70,217,124,0.08); color: var(--green); }
+  .auth-form .field { margin-bottom: 14px; }
+  .auth-form button { width: 100%; background: var(--green); color: #001008; border: none; padding: 14px; font-family: var(--mono); font-size: 12px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; border-radius: 2px; margin-top: 6px; }
+  .auth-form button:active { transform: scale(0.98); }
+  .auth-form button:disabled { background: var(--line-2); color: var(--ink-faint); cursor: not-allowed; }
+  .auth-msg { margin-top: 14px; padding: 10px 12px; font-family: var(--mono); font-size: 11px; border-radius: 2px; display: none; }
+  .auth-msg.error { background: rgba(232,83,63,0.1); border: 1px solid rgba(232,83,63,0.3); color: var(--red); display: block; }
+  .auth-msg.success { background: rgba(70,217,124,0.1); border: 1px solid rgba(70,217,124,0.3); color: var(--green); display: block; }
+
+  /* ===== USER BADGE IN HEADER ===== */
+  .user-bar { display: flex; align-items: center; gap: 10px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .user-email { flex: 1; font-family: var(--mono); font-size: 10px; color: var(--ink-dim); letter-spacing: 0.05em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .header-btn { background: transparent; border: 1px solid var(--line-2); color: var(--ink-dim); padding: 6px 10px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 2px; }
+  .header-btn:active { background: var(--panel-2); }
+  .header-btn.primary { color: var(--green); border-color: var(--green-dim); }
+
+  /* ===== HISTORY MODAL ===== */
+  .hist-list { display: flex; flex-direction: column; gap: 10px; }
+  .hist-item { background: var(--panel); border: 1px solid var(--line); padding: 14px; border-radius: 2px; cursor: pointer; transition: 0.2s; }
+  .hist-item:active { background: var(--panel-2); border-color: var(--green-dim); }
+  .hist-name { font-family: var(--serif); font-size: 16px; font-weight: 600; }
+  .hist-meta { font-family: var(--mono); font-size: 10px; color: var(--ink-dim); margin-top: 4px; letter-spacing: 0.05em; }
+  .hist-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .hist-actions button { flex: 1; padding: 8px; font-size: 10px; }
+  .hist-empty { text-align: center; padding: 40px 20px; color: var(--ink-faint); font-family: var(--mono); font-size: 12px; }
+</style>
+</head>
+<body>
+
+<!-- ========== AUTH SCREEN ========== -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-box">
+    <div class="auth-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#46d97c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8S2 12 2 12z"/>
+        <circle cx="12" cy="12" r="3" fill="#46d97c"/>
+      </svg>
+    </div>
+    <div class="auth-title">SIKHANE<em>-TECH</em></div>
+    <div class="auth-sub">Configurateur Mikrotik Sénégal</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login" onclick="authTab('login')">Connexion</button>
+      <button class="auth-tab" data-tab="signup" onclick="authTab('signup')">Inscription</button>
+    </div>
+
+    <div class="auth-form">
+      <div class="field">
+        <label>Email</label>
+        <input type="text" id="authEmail" placeholder="votre@email.com" autocomplete="email" />
+      </div>
+      <div class="field">
+        <label>Mot de passe</label>
+        <input type="password" id="authPass" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <button id="authBtn" onclick="authSubmit()">Se connecter →</button>
+      <div class="auth-msg" id="authMsg"></div>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="mainApp" style="display:none;">
+
+  <header>
+    <div class="brand">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#46d97c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8S2 12 2 12z"/>
+          <circle cx="12" cy="12" r="3" fill="#46d97c"/>
+        </svg>
+      </div>
+      <div>
+        <h1>SIKHANE<em>-TECH</em> <span style="font-size:11px;color:var(--ink-faint);font-family:var(--mono);letter-spacing:0.1em;">v2</span></h1>
+        <div class="sub">Sénégal · Hotspot · Mikhmon</div>
+      </div>
+    </div>
+    <div class="status-bar">
+      <span><span class="dot"></span>SYSTEM READY</span>
+      <span id="time">--:--:--</span>
+    </div>
+    <div class="user-bar">
+      <span class="user-email" id="userEmail">—</span>
+      <button class="header-btn primary" onclick="openHistory()">📁 Historique</button>
+      <button class="header-btn" onclick="logout()">Sortir</button>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="eyebrow">Générateur v2 · v2 production-ready</div>
+    <h2 class="title">Configs <em>professionnelles</em>,<br>sans le cloud.</h2>
+    <p class="lede">Génère une config RouterOS complète : bridge unifié, hotspot Mikhmon avec <strong>vraie expiration des tickets</strong>, anti-partage TTL, chaînes firewall isolées. Tunnel VPN désactivé pour l'instant — purement local.</p>
+    <div class="badge-line">
+      <span class="badge on">✓ Hotspot</span>
+      <span class="badge on">✓ Mikhmon on-login</span>
+      <span class="badge on">✓ Anti-partage TTL</span>
+      <span class="badge on">✓ Auto-heal</span>
+      <span class="badge">— SSTP (off)</span>
+    </div>
+  </div>
+
+  <!-- 1. SITE -->
+  <section class="card" data-section="1">
+    <div class="card-head">
+      <div class="card-num">SECTION 01</div>
+      <div class="card-title">Identité du site</div>
+      <div class="card-desc">Identifie ton site WiFi Zone : un nom, un SSID, un identifiant.</div>
+    </div>
+    <div class="card-body">
+      <div class="field"><label>Nom du site <span class="req">*</span></label>
+        <input type="text" id="siteName" placeholder="ex: Mermoz Digital Zone" /></div>
+      <div class="row">
+        <div class="field"><label>SSID WiFi</label>
+          <input type="text" id="ssid" placeholder="ex: Mermoz Digital Zone" /></div>
+        <div class="field"><label>Identifiant court</label>
+          <input type="text" id="siteId" placeholder="ex: MRZ-01" /></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Mot de passe admin <span class="req">*</span></label>
+          <input type="password" id="adminPass" placeholder="••••••••" /></div>
+        <div class="field"><label>DNS local <span class="hint">domaine</span></label>
+          <input type="text" id="dnsName" value="hotspot.local" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. RÉSEAU -->
+  <section class="card" data-section="2">
+    <div class="card-head">
+      <div class="card-num">SECTION 02</div>
+      <div class="card-title">Réseau & DHCP</div>
+      <div class="card-desc">Plage IP, bridge, interfaces. Le /23 permet jusqu'à 510 clients.</div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="field"><label>Plage IP hotspot</label>
+          <select id="netSize">
+            <option value="10.10.0.0/24">10.10.0.0/24 (254 clients)</option>
+            <option value="10.10.0.0/23" selected>10.10.0.0/23 (510 clients) — recommandé</option>
+            <option value="192.168.10.0/24">192.168.10.0/24 (254 clients)</option>
+          </select></div>
+        <div class="field"><label>Interface WAN</label>
+          <select id="wanIface">
+            <option value="ether1" selected>ether1</option>
+            <option value="ether2">ether2</option>
+          </select></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>DNS upstream</label>
+          <select id="dns">
+            <option value="8.8.8.8,8.8.4.4" selected>Google</option>
+            <option value="1.1.1.1,1.0.0.1">Cloudflare</option>
+            <option value="9.9.9.9,149.112.112.112">Quad9</option>
+          </select></div>
+        <div class="field"><label>Bande passante WAN <span class="hint">Mbps</span></label>
+          <input type="number" id="wanBw" value="20" min="1" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. PROFILS MIKHMON -->
+  <section class="card" data-section="3">
+    <div class="card-head">
+      <div class="card-num">SECTION 03</div>
+      <div class="card-title">Profils de tickets Mikhmon</div>
+      <div class="card-desc">Chaque profil a son nom, durée, prix et débit. Le script <strong>on-login</strong> sera ajouté automatiquement pour gérer l'expiration réelle (le fix Mikhmon).</div>
+    </div>
+    <div class="card-body">
+      <div id="profiles"></div>
+      <button class="add-profile" onclick="addProfile()">+ Ajouter un profil</button>
+    </div>
+  </section>
+
+  <!-- 4. OPTIONS AVANCÉES -->
+  <section class="card" data-section="4">
+    <div class="card-head">
+      <div class="card-num">SECTION 04</div>
+      <div class="card-title">Options avancées</div>
+      <div class="card-desc">Fonctionnalités avancées à activer/désactiver selon ton besoin.</div>
+    </div>
+    <div class="card-body">
+      <div class="toggle-row">
+        <div>
+          <div class="label-strong">Anti-partage TTL</div>
+          <div class="label-sub">Empêche le tethering des clients connectés</div>
+        </div>
+        <div class="toggle" id="t-ttl" data-on="true" onclick="this.dataset.on = this.dataset.on === 'true' ? 'false' : 'true'"></div>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="label-strong">Script auto-heal</div>
+          <div class="label-sub">Recrée les règles firewall si elles disparaissent</div>
+        </div>
+        <div class="toggle" id="t-heal" data-on="true" onclick="this.dataset.on = this.dataset.on === 'true' ? 'false' : 'true'"></div>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="label-strong">Mikhmon on-login (expiration vraie)</div>
+          <div class="label-sub">Le scheduler qui corrige l'expiration des tickets</div>
+        </div>
+        <div class="toggle" id="t-mikhmon" data-on="true" onclick="this.dataset.on = this.dataset.on === 'true' ? 'false' : 'true'"></div>
+      </div>
+      <div class="toggle-row">
+        <div>
+          <div class="label-strong">Bridge tous les ethers (2-5) + wlan1</div>
+          <div class="label-sub">Tous les ports LAN dans un seul réseau</div>
+        </div>
+        <div class="toggle" id="t-bridge" data-on="true" onclick="this.dataset.on = this.dataset.on === 'true' ? 'false' : 'true'"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="generate-wrap"><div class="inner">
+  <button class="btn-primary" onclick="generate()">Générer la configuration<span class="arrow">→</span></button>
+</div></div>
+
+<!-- OUTPUT -->
+<div class="output" id="output">
+  <div class="output-inner">
+    <div class="output-head">
+      <div>
+        <div class="eyebrow">Configuration générée</div>
+        <h3 id="outTitle">Script RouterOS</h3>
+      </div>
+      <button class="output-close" onclick="closeOutput()">×</button>
+    </div>
+    <div class="config-meta" id="configMeta"></div>
+    <pre class="code-block" id="codeOut"></pre>
+    <div class="actions">
+      <button class="btn-sec" id="copyBtn" onclick="copyCode()">Copier le script</button>
+      <button class="btn-sec" onclick="downloadRsc()">Télécharger .rsc</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY MODAL -->
+<div class="output" id="historyModal">
+  <div class="output-inner">
+    <div class="output-head">
+      <div>
+        <div class="eyebrow">Vos configurations</div>
+        <h3>Historique</h3>
+      </div>
+      <button class="output-close" onclick="closeHistory()">×</button>
+    </div>
+    <div id="historyList" class="hist-list">
+      <div class="hist-empty">Chargement...</div>
+    </div>
+  </div>
+</div>
+
+<footer>SIKHANE-TECH v2 · Made for Sénégal <span class="flag"></span> · Made by SIKHANE-TECH</footer>
+
+<script>
+  // ============================================================
+  // CONFIGURATION SUPABASE — REMPLACE LES 2 VALEURS CI-DESSOUS
+  // ============================================================
+  const SUPABASE_URL = 'https://lxicwateowopllzyabsg.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_VNYuFFbE-pUGAJKV5pLZRQ_SPB8S9v-';
+  // ============================================================
+
+  const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  let currentUser = null;
+
+  // ===== AUTH =====
+  let authMode = 'login';
+  function authTab(t) {
+    authMode = t;
+    document.querySelectorAll('.auth-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
+    document.getElementById('authBtn').textContent = t === 'login' ? 'Se connecter →' : 'Créer mon compte →';
+    document.getElementById('authMsg').className = 'auth-msg';
+  }
+
+  async function authSubmit() {
+    const email = document.getElementById('authEmail').value.trim();
+    const pass = document.getElementById('authPass').value;
+    const msg = document.getElementById('authMsg');
+    const btn = document.getElementById('authBtn');
+
+    if (!email || !pass) {
+      msg.className = 'auth-msg error';
+      msg.textContent = 'Email et mot de passe requis.';
+      return;
+    }
+    if (pass.length < 6) {
+      msg.className = 'auth-msg error';
+      msg.textContent = 'Mot de passe : 6 caractères minimum.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = '...';
+
+    try {
+      let result;
+      if (authMode === 'login') {
+        result = await supa.auth.signInWithPassword({ email, password: pass });
+      } else {
+        result = await supa.auth.signUp({ email, password: pass });
+      }
+
+      if (result.error) {
+        msg.className = 'auth-msg error';
+        msg.textContent = result.error.message;
+        btn.disabled = false;
+        btn.textContent = authMode === 'login' ? 'Se connecter →' : 'Créer mon compte →';
+        return;
+      }
+
+      if (authMode === 'signup' && !result.data.session) {
+        msg.className = 'auth-msg success';
+        msg.textContent = 'Compte créé ! Vérifie ton email pour confirmer.';
+        btn.disabled = false;
+        btn.textContent = 'Créer mon compte →';
+        return;
+      }
+
+      // Connecté
+      currentUser = result.data.user;
+      enterApp();
+    } catch (e) {
+      msg.className = 'auth-msg error';
+      msg.textContent = 'Erreur : ' + e.message;
+      btn.disabled = false;
+      btn.textContent = authMode === 'login' ? 'Se connecter →' : 'Créer mon compte →';
+    }
+  }
+
+  function enterApp() {
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('userEmail').textContent = currentUser.email;
+  }
+
+  async function logout() {
+    if (!confirm('Se déconnecter ?')) return;
+    await supa.auth.signOut();
+    location.reload();
+  }
+
+  // Vérifier session au chargement
+  (async () => {
+    const { data } = await supa.auth.getSession();
+    if (data.session) {
+      currentUser = data.session.user;
+      enterApp();
+    }
+  })();
+
+  // ===== HISTORIQUE =====
+  async function openHistory() {
+    document.getElementById('historyModal').classList.add('open');
+    const list = document.getElementById('historyList');
+    list.innerHTML = '<div class="hist-empty">Chargement...</div>';
+
+    const { data, error } = await supa
+      .from('configs')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (error) {
+      list.innerHTML = `<div class="hist-empty">Erreur : ${error.message}</div>`;
+      return;
+    }
+    if (!data || data.length === 0) {
+      list.innerHTML = '<div class="hist-empty">Aucune configuration encore.<br>Génère ta première config !</div>';
+      return;
+    }
+
+    list.innerHTML = data.map(c => {
+      const date = new Date(c.created_at).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+      return `
+        <div class="hist-item">
+          <div class="hist-name">${escapeHtml(c.site_name)}</div>
+          <div class="hist-meta">${escapeHtml(c.site_id)} · ${escapeHtml(c.ssid || '—')} · ${escapeHtml(c.network_cidr || '—')} · ${c.profiles_count} profils · ${date}</div>
+          <div class="hist-actions">
+            <button class="btn-sec" onclick="reloadConfig('${c.id}')">Voir / Copier</button>
+            <button class="btn-sec" onclick="deleteConfig('${c.id}')" style="color:var(--red);">Supprimer</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  function closeHistory() { document.getElementById('historyModal').classList.remove('open'); }
+  function escapeHtml(s) { return String(s||'').replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  async function reloadConfig(id) {
+    const { data, error } = await supa.from('configs').select('*').eq('id', id).single();
+    if (error) { alert('Erreur : ' + error.message); return; }
+    document.getElementById('codeOut').dataset.raw = data.rsc_content;
+    const colored = data.rsc_content
+      .replace(/^(#.*)$/gm, '<span class="c-com">$1</span>')
+      .replace(/(\/[a-z][a-z\- ]+)(?= )/g, '<span class="c-cmd">$1</span>')
+      .replace(/"([^"]+)"/g, '<span class="c-str">"$1"</span>');
+    document.getElementById('codeOut').innerHTML = colored;
+    document.getElementById('outTitle').textContent = `${data.site_id}.rsc`;
+    document.getElementById('configMeta').innerHTML = `
+      <div><span>Site</span><span>${escapeHtml(data.site_name)} · ${escapeHtml(data.site_id)}</span></div>
+      <div><span>SSID</span><span>${escapeHtml(data.ssid || '—')}</span></div>
+      <div><span>Réseau</span><span>${escapeHtml(data.network_cidr || '—')}</span></div>
+      <div><span>Profils</span><span>${data.profiles_count}</span></div>
+      <div><span>Créé le</span><span>${new Date(data.created_at).toLocaleString('fr-FR')}</span></div>
+    `;
+    closeHistory();
+    document.getElementById('output').classList.add('open');
+  }
+
+  async function deleteConfig(id) {
+    if (!confirm('Supprimer cette configuration ?')) return;
+    const { error } = await supa.from('configs').delete().eq('id', id);
+    if (error) { alert('Erreur : ' + error.message); return; }
+    openHistory(); // recharge la liste
+  }
+
+  // ===== APP =====
+  let profiles = [
+    { name: '1H', duration: '1h', price: 100, rate: '1M/2M' },
+    { name: '2H', duration: '2h', price: 200, rate: '1M/2M' },
+    { name: '24H', duration: '1d', price: 500, rate: '2M/4M' },
+    { name: '7J', duration: '7d', price: 2000, rate: '2M/4M' }
+  ];
+
+  function tick() {
+    const d = new Date();
+    document.getElementById('time').textContent =
+      String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0') + ':' + String(d.getSeconds()).padStart(2,'0');
+  }
+  setInterval(tick, 1000); tick();
+
+  function renderProfiles() {
+    const c = document.getElementById('profiles');
+    c.innerHTML = '';
+    profiles.forEach((p, i) => {
+      const div = document.createElement('div');
+      div.className = 'profile';
+      div.innerHTML = `
+        <div class="profile-head">
+          <div class="profile-tag">PROFIL ${String(i+1).padStart(2,'0')}</div>
+          <button class="profile-del" onclick="delProfile(${i})" ${profiles.length<=1?'disabled style="opacity:0.3"':''}>×</button>
+        </div>
+        <div class="profile-row">
+          <div>
+            <span class="mini-label">Nom</span>
+            <input type="text" value="${p.name}" onchange="upd(${i},'name',this.value)" />
+          </div>
+          <div>
+            <span class="mini-label">Durée</span>
+            <input type="text" value="${p.duration}" placeholder="1h,1d,7d" onchange="upd(${i},'duration',this.value)" />
+          </div>
+          <div>
+            <span class="mini-label">Prix FCFA</span>
+            <input type="number" value="${p.price}" onchange="upd(${i},'price',parseInt(this.value)||0)" />
+          </div>
+        </div>
+        <div style="margin-top:8px;">
+          <span class="mini-label">Débit (upload/download)</span>
+          <input type="text" value="${p.rate}" placeholder="1M/2M" onchange="upd(${i},'rate',this.value)" />
+        </div>
+      `;
+      c.appendChild(div);
+    });
+  }
+  function upd(i,k,v){ profiles[i][k]=v; }
+  function addProfile(){ profiles.push({name:'NEW',duration:'1h',price:100,rate:'1M/2M'}); renderProfiles(); }
+  function delProfile(i){ if(profiles.length<=1) return; profiles.splice(i,1); renderProfiles(); }
+  renderProfiles();
+
+  // Stepper scroll
+  const sections = document.querySelectorAll('section.card');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('touched'); });
+  }, { threshold: 0.4 });
+  sections.forEach(s => obs.observe(s));
+
+  function durToSession(d) {
+    const m = d.match(/^(\d+)([hdw])$/);
+    if (!m) return '01:00:00';
+    const n = parseInt(m[1]);
+    if (m[2]==='h') return `${String(n).padStart(2,'0')}:00:00`;
+    if (m[2]==='d') return `${n*24}:00:00`;
+    if (m[2]==='w') return `${n*7*24}:00:00`;
+    return '01:00:00';
+  }
+  function durToInterval(d) {
+    const m = d.match(/^(\d+)([hdw])$/);
+    if (!m) return '1h';
+    return m[1] + (m[2]==='w'?'w':m[2]);
+  }
+
+  async function generate() {
+    const siteName = (document.getElementById('siteName').value || 'WiFi Zone').trim();
+    const ssid = (document.getElementById('ssid').value || siteName).trim();
+    const siteId = (document.getElementById('siteId').value || 'STE-01').trim();
+    const adminPass = document.getElementById('adminPass').value || 'ChangeMe2026!';
+    const dnsName = document.getElementById('dnsName').value || 'hotspot.local';
+    const netCidr = document.getElementById('netSize').value;
+    const wanIface = document.getElementById('wanIface').value;
+    const dns = document.getElementById('dns').value;
+    const wanBw = document.getElementById('wanBw').value;
+
+    const ttl = document.getElementById('t-ttl').dataset.on === 'true';
+    const heal = document.getElementById('t-heal').dataset.on === 'true';
+    const mikhmon = document.getElementById('t-mikhmon').dataset.on === 'true';
+    const bridgeAll = document.getElementById('t-bridge').dataset.on === 'true';
+
+    const [netIp, mask] = netCidr.split('/');
+    const parts = netIp.split('.');
+    const gw = `${parts[0]}.${parts[1]}.${parts[2]}.1`;
+    let poolStart, poolEnd;
+    if (mask === '23') {
+      poolStart = `${parts[0]}.${parts[1]}.${parts[2]}.20`;
+      poolEnd = `${parts[0]}.${parts[1]}.${parseInt(parts[2])+1}.254`;
+    } else {
+      poolStart = `${parts[0]}.${parts[1]}.${parts[2]}.20`;
+      poolEnd = `${parts[0]}.${parts[1]}.${parts[2]}.254`;
+    }
+
+    let r = '';
+    r += `# ============================================================\n`;
+    r += `# SIKHANE-TECH v2 — Configuration RouterOS\n`;
+    r += `# Site      : ${siteName}\n`;
+    r += `# ID        : ${siteId}\n`;
+    r += `# Généré le : ${new Date().toISOString()}\n`;
+    r += `# Structure : SIKHANE-TECH (local, sans tunnel cloud)\n`;
+    r += `# ============================================================\n\n`;
+
+    // === IDENTITY & USER ===
+    r += `# --- 1. Identité système ---\n`;
+    r += `/system identity set name="${siteId}"\n`;
+    r += `/user set admin password="${adminPass}"\n\n`;
+
+    // === BRIDGE ===
+    r += `# --- 2. Bridge local ---\n`;
+    r += `/interface bridge\nadd name=bridge-local protocol-mode=none\n\n`;
+
+    // === WIFI ===
+    r += `# --- 3. WiFi (hotspot ouvert, login par portail) ---\n`;
+    r += `/interface wireless\nset [ find default-name=wlan1 ] band=2ghz-g/n disabled=no mode=ap-bridge ssid="${ssid}"\n`;
+    r += `/interface wireless security-profiles\nset [ find default=yes ] supplicant-identity=MikroTik\n\n`;
+
+    // === HOTSPOT PROFILE ===
+    r += `# --- 4. Profil hotspot ---\n`;
+    r += `/ip hotspot profile\n`;
+    r += `add dns-name=${dnsName} hotspot-address=${gw} html-directory=hotspot \\\n`;
+    r += `    login-by=cookie,http-chap,https,http-pap,mac-cookie name=hsprof1\n\n`;
+
+    // === POOL & DHCP ===
+    r += `# --- 5. Pool IP & DHCP ---\n`;
+    r += `/ip pool\nadd name=pool-hotspot ranges=${poolStart}-${poolEnd}\n`;
+    r += `/ip dhcp-server\nadd address-pool=pool-hotspot interface=bridge-local name=dhcp-hotspot\n\n`;
+
+    // === USER PROFILES (admin + custom) ===
+    r += `# --- 6. Profils utilisateurs ---\n`;
+    r += `/ip hotspot user profile\n`;
+    r += `add name=admin shared-users=unlimited\n`;
+
+    profiles.forEach(p => {
+      const safeName = p.name.replace(/[^a-zA-Z0-9]/g,'_').toUpperCase();
+      const sessTo = durToSession(p.duration);
+      const interval = durToInterval(p.duration);
+
+      if (mikhmon) {
+        // Profil avec script on-login Mikhmon
+        r += `add name=${safeName} address-pool=pool-hotspot rate-limit=${p.rate} session-timeout=${sessTo} shared-users=1 \\\n`;
+        r += `    on-login=":put (\\",remc,${p.price},${p.duration},${p.price},,Disable,\\"); {:local comment [ /ip hotspot user get [/ip hotspot user find where name=\\"\\$user\\"] comment]; :local ucode [:pic \\$comment 0 2]; :if (\\$ucode = \\"vc\\" or \\$ucode = \\"up\\" or \\$comment = \\"\\") do={ :local date [ /system clock get date ];:local year [ :pick \\$date 0 4 ];:local month [ :pick \\$date 5 7 ]; /sys sch add name=\\"\\$user\\" disable=no start-date=\\$date interval=\\"${interval}\\"; :delay 5s; :local exp [ /sys sch get [ /sys sch find where name=\\"\\$user\\" ] next-run]; :local getxp [len \\$exp]; :if (\\$getxp = 15) do={ :local d [:pic \\$exp 0 6]; :local t [:pic \\$exp 7 16]; :local s (\\"/\\"); :local exp (\\"\\$d\\$s\\$year \\$t\\"); /ip hotspot user set comment=\\"\\$exp\\" [find where name=\\"\\$user\\"];}; :if (\\$getxp = 8) do={ /ip hotspot user set comment=\\"\\$date \\$exp\\" [find where name=\\"\\$user\\"];}; :if (\\$getxp > 15) do={ /ip hotspot user set comment=\\"\\$exp\\" [find where name=\\"\\$user\\"];};:delay 5s; /sys sch remove [find where name=\\"\\$user\\"]; :local mac \\$\\"mac-address\\"; :local time [/system clock get time ]; /system script add name=\\"\\$date-|-\\$time-|-\\$user-|-${p.price}-|-\\$address-|-\\$mac-|-${p.duration}-|-${safeName}-|-\\$comment\\" owner=\\"\\$month\\$year\\" source=\\"\\$date\\" comment=\\"mikhmon\\"}}"\n`;
+      } else {
+        r += `add name=${safeName} address-pool=pool-hotspot rate-limit=${p.rate} session-timeout=${sessTo} shared-users=1\n`;
+      }
+    });
+    r += `\n`;
+
+    // === BRIDGE PORTS ===
+    r += `# --- 7. Ports bridge ---\n`;
+    r += `/interface bridge port\n`;
+    if (bridgeAll) {
+      r += `add bridge=bridge-local interface=ether2\n`;
+      r += `add bridge=bridge-local interface=ether3\n`;
+      r += `add bridge=bridge-local interface=ether4\n`;
+      r += `add bridge=bridge-local interface=ether5\n`;
+    }
+    r += `add bridge=bridge-local interface=wlan1\n\n`;
+
+    // === IP ADDR ===
+    r += `# --- 8. Adressage IP ---\n`;
+    r += `/ip address\nadd address=${gw}/${mask} interface=bridge-local network=${netIp}\n`;
+    r += `/ip dhcp-client\nadd comment="WAN" interface=${wanIface} disabled=no\n`;
+    r += `/ip dhcp-server network\nadd address=${netCidr} dns-server=${gw} gateway=${gw}\n`;
+    r += `/ip dns\nset allow-remote-requests=yes servers=${gw},${dns.split(',')[0]}\n\n`;
+
+    // === FIREWALL ===
+    r += `# --- 9. Firewall (chaînes isolées SIKHANE-TECH) ---\n`;
+    r += `/ip firewall filter\n`;
+    r += `add action=accept chain=SIKHANE-input comment=SIKHANE-rule-icmp protocol=icmp\n`;
+    r += `add action=accept chain=SIKHANE-input comment=SIKHANE-rule-estab-in connection-state=established,related\n`;
+    r += `add action=return chain=SIKHANE-input comment=SIKHANE-rule-return-in\n`;
+    r += `add action=accept chain=SIKHANE-forward comment=SIKHANE-rule-estab-fwd connection-state=established,related\n`;
+    r += `add action=return chain=SIKHANE-forward comment=SIKHANE-rule-return-fwd\n`;
+    r += `add action=jump chain=input comment=SIKHANE-jump-input jump-target=SIKHANE-input\n`;
+    r += `add action=jump chain=forward comment=SIKHANE-jump-forward jump-target=SIKHANE-forward\n\n`;
+
+    // === MANGLE TTL anti-partage ===
+    if (ttl) {
+      r += `# --- 10. Anti-partage TTL ---\n`;
+      r += `/ip firewall mangle\n`;
+      r += `add action=change-ttl chain=postrouting comment="Anti-partage TTL" hotspot=auth new-ttl=set:1 out-interface=bridge-local passthrough=no\n\n`;
+    }
+
+    // === NAT ===
+    r += `# --- 11. NAT (sortie internet) ---\n`;
+    r += `/ip firewall nat\n`;
+    r += `add action=masquerade chain=srcnat comment="Hotspot masquerade" out-interface=${wanIface} src-address=${netCidr}\n\n`;
+
+    // === HOTSPOT SERVER ===
+    r += `# --- 12. Serveur hotspot ---\n`;
+    r += `/ip hotspot\nadd address-pool=pool-hotspot addresses-per-mac=1 disabled=no interface=bridge-local name=hotspot1 profile=hsprof1\n`;
+    r += `/ip hotspot user\nadd name=admin\n\n`;
+
+    // === AUTO-HEAL ===
+    if (heal) {
+      r += `# --- 13. Script auto-heal (recrée règles si effacées) ---\n`;
+      r += `/system script\n`;
+      r += `add dont-require-permissions=no name=SIKHANE-heal-script owner=*sys policy=ftp,reboot,read,write,policy,test,password,sniff,sensitive source="\\\n`;
+      r += `  :if ([:len [/ip firewall filter find comment=\\"SIKHANE-rule-icmp\\"]] = 0) do={\\\n`;
+      r += `    /ip firewall filter add chain=SIKHANE-input action=accept protocol=icmp comment=\\"SIKHANE-rule-icmp\\"\\\n`;
+      r += `    :log warning \\"SIKHANE-HEAL: rule-icmp recreee\\"\\\n`;
+      r += `  }\\\n`;
+      r += `  :if ([:len [/ip firewall filter find comment=\\"SIKHANE-rule-estab-in\\"]] = 0) do={\\\n`;
+      r += `    /ip firewall filter add chain=SIKHANE-input action=accept connection-state=established,related comment=\\"SIKHANE-rule-estab-in\\"\\\n`;
+      r += `    :log warning \\"SIKHANE-HEAL: rule-estab-in recreee\\"\\\n`;
+      r += `  }\\\n`;
+      r += `  :if ([:len [/ip firewall nat find comment=\\"SIKHANE-nat-masq\\"]] = 0) do={\\\n`;
+      r += `    /ip firewall nat add chain=srcnat out-interface=${wanIface} action=masquerade src-address=${netCidr} comment=\\"SIKHANE-nat-masq\\"\\\n`;
+      r += `    :log warning \\"SIKHANE-HEAL: nat-masq recree\\"\\\n`;
+      r += `  }\\\n`;
+      r += `"\n`;
+      r += `/system scheduler\nadd interval=5m name=SIKHANE-heal on-event=SIKHANE-heal-script start-time=startup\n\n`;
+    }
+
+    r += `# ============================================================\n`;
+    r += `# FIN — ${siteName} (${siteId})\n`;
+    r += `# Tunnel SSTP/VPN : non activé (à ajouter plus tard)\n`;
+    r += `# Walled garden Mobile Money : non activé (vente cash Mikhmon)\n`;
+    r += `# ============================================================\n`;
+
+    // Coloriser pour affichage
+    const colored = r
+      .replace(/^(#.*)$/gm, '<span class="c-com">$1</span>')
+      .replace(/(\/[a-z][a-z\- ]+)(?= )/g, '<span class="c-cmd">$1</span>')
+      .replace(/"([^"]+)"/g, '<span class="c-str">"$1"</span>');
+
+    const meta = `
+      <div><span>Site</span><span>${siteName} · ${siteId}</span></div>
+      <div><span>SSID</span><span>${ssid}</span></div>
+      <div><span>Réseau</span><span>${netCidr} · gw ${gw}</span></div>
+      <div><span>Pool DHCP</span><span>${poolStart} → ${poolEnd}</span></div>
+      <div><span>WAN</span><span>${wanIface} (${wanBw} Mbps)</span></div>
+      <div><span>Profils tickets</span><span>${profiles.length}</span></div>
+      <div><span>Mikhmon on-login</span><span>${mikhmon?'✓ activé':'— désactivé'}</span></div>
+      <div><span>Anti-partage TTL</span><span>${ttl?'✓ activé':'— désactivé'}</span></div>
+      <div><span>Auto-heal</span><span>${heal?'✓ activé':'— désactivé'}</span></div>
+      <div><span>Lignes</span><span>${r.split('\n').length}</span></div>
+    `;
+    document.getElementById('configMeta').innerHTML = meta;
+    document.getElementById('codeOut').innerHTML = colored;
+    document.getElementById('codeOut').dataset.raw = r;
+    document.getElementById('outTitle').textContent = `${siteId}.rsc`;
+    document.getElementById('output').classList.add('open');
+
+    // ===== SAUVEGARDE SUPABASE =====
+    if (currentUser) {
+      try {
+        const { error } = await supa.from('configs').insert({
+          user_id: currentUser.id,
+          site_name: siteName,
+          site_id: siteId,
+          ssid: ssid,
+          network_cidr: netCidr,
+          profiles_count: profiles.length,
+          rsc_content: r
+        });
+        if (error) {
+          console.error('Erreur sauvegarde :', error);
+        } else {
+          console.log('✓ Config sauvegardée dans l\'historique');
+        }
+      } catch (e) {
+        console.error('Erreur sauvegarde :', e);
+      }
+    }
+  }
+
+  function closeOutput() { document.getElementById('output').classList.remove('open'); }
+  function copyCode() {
+    const raw = document.getElementById('codeOut').dataset.raw;
+    navigator.clipboard.writeText(raw).then(() => {
+      const b = document.getElementById('copyBtn');
+      b.textContent = '✓ Copié'; b.classList.add('copied');
+      setTimeout(() => { b.textContent = 'Copier le script'; b.classList.remove('copied'); }, 2000);
+    });
+  }
+  function downloadRsc() {
+    const raw = document.getElementById('codeOut').dataset.raw;
+    const siteId = document.getElementById('siteId').value || 'site';
+    const blob = new Blob([raw], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `sikhane-${siteId.toLowerCase()}.rsc`; a.click();
+    URL.revokeObjectURL(url);
+  }
+</script>
+</body>
+</html>
