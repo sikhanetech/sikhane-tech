@@ -44,6 +44,108 @@
   .auth-msg.error { background: rgba(232,83,63,0.1); border: 1px solid rgba(232,83,63,0.3); color: var(--red); display: block; }
   .auth-msg.success { background: rgba(70,217,124,0.1); border: 1px solid rgba(70,217,124,0.3); color: var(--green); display: block; }
 
+  /* =================== LANDING PAGE =================== */
+  .landing { position: fixed; inset: 0; z-index: 900; background: var(--bg); overflow-y: auto; }
+  .landing.hidden { display: none; }
+  .landing-inner { max-width: 1100px; margin: 0 auto; padding: 24px 24px 80px; }
+
+  .land-nav { display: flex; justify-content: space-between; align-items: center; padding: 8px 0 32px; }
+  .land-brand { display: flex; align-items: center; gap: 10px; }
+  .land-brand .sb-logo { width: 36px; height: 36px; }
+  .land-brand .name { font-family: var(--serif); font-weight: 800; font-size: 18px; letter-spacing: -0.02em; line-height: 1; }
+  .land-brand .name em { font-style: italic; font-weight: 400; color: var(--yellow); }
+  .land-brand .tag { font-family: var(--mono); font-size: 8px; color: var(--ink-faint); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 3px; }
+  .land-nav-btns { display: flex; gap: 8px; }
+  .land-nav-btns button { background: transparent; border: 1px solid var(--line-2); color: var(--ink); padding: 9px 14px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 2px; transition: 0.2s; }
+  .land-nav-btns button:hover { border-color: var(--green); color: var(--green); }
+  .land-nav-btns button.primary { background: var(--green); color: #001008; border-color: var(--green); font-weight: 800; }
+  .land-nav-btns button.primary:hover { background: #58e88c; color: #001008; }
+
+  /* HERO */
+  .land-hero { padding: 40px 0 60px; position: relative; }
+  .land-hero::after { content: ''; position: absolute; top: -20px; right: -100px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(70,217,124,0.1), transparent 60%); pointer-events: none; z-index: -1; }
+  .land-eyebrow { font-family: var(--mono); font-size: 11px; color: var(--green); text-transform: uppercase; letter-spacing: 0.25em; margin-bottom: 18px; display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid var(--green-dim); background: rgba(70,217,124,0.05); border-radius: 2px; }
+  .land-eyebrow .dot { display:inline-block; width:6px; height:6px; background:var(--green); border-radius:50%; box-shadow: 0 0 8px var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .land-h1 { font-family: var(--serif); font-weight: 800; font-size: clamp(40px, 8vw, 78px); line-height: 0.95; letter-spacing: -0.035em; max-width: 900px; }
+  .land-h1 em { font-style: italic; font-weight: 400; color: var(--yellow); }
+  .land-h1 .accent { color: var(--green); }
+  .land-lede { font-size: clamp(16px, 2vw, 19px); color: var(--ink-dim); line-height: 1.55; margin-top: 24px; max-width: 600px; }
+  .land-cta { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+  .land-cta .btn-big { background: var(--green); color: #001008; border: none; padding: 16px 28px; font-family: var(--mono); font-size: 13px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 2px; }
+  .land-cta .btn-big:hover { background: #58e88c; }
+  .land-cta .btn-big-sec { background: transparent; color: var(--ink); border: 1px solid var(--line-2); padding: 16px 28px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 2px; }
+  .land-cta .btn-big-sec:hover { border-color: var(--green); color: var(--green); }
+  .land-trust { margin-top: 28px; font-family: var(--mono); font-size: 11px; color: var(--ink-faint); display: flex; gap: 18px; flex-wrap: wrap; }
+  .land-trust span { display: flex; align-items: center; gap: 6px; }
+  .land-trust .check { color: var(--green); font-weight: 800; }
+
+  /* FEATURES GRID */
+  .land-section { padding: 60px 0; border-top: 1px solid var(--line); }
+  .land-section-eyebrow { font-family: var(--mono); font-size: 11px; color: var(--green); text-transform: uppercase; letter-spacing: 0.25em; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .land-section-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--green); }
+  .land-section-title { font-family: var(--serif); font-weight: 800; font-size: clamp(28px, 5vw, 42px); line-height: 1.05; letter-spacing: -0.02em; max-width: 700px; }
+  .land-section-title em { font-style: italic; font-weight: 400; color: var(--yellow); }
+  .land-section-sub { color: var(--ink-dim); font-size: 15px; line-height: 1.55; margin-top: 14px; max-width: 600px; }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 36px; }
+  .feature { background: var(--panel); border: 1px solid var(--line); padding: 24px; border-radius: 2px; position: relative; overflow: hidden; transition: 0.2s; }
+  .feature:hover { border-color: var(--green-dim); transform: translateY(-2px); }
+  .feature::before { content: ''; position: absolute; top: 0; left: 0; height: 100%; width: 3px; background: var(--green); transform: scaleY(0); transform-origin: top; transition: 0.3s; }
+  .feature:hover::before { transform: scaleY(1); }
+  .feature .ficon { width: 40px; height: 40px; background: rgba(70,217,124,0.08); border: 1px solid var(--green-dim); border-radius: 2px; display: grid; place-items: center; margin-bottom: 14px; }
+  .feature .ficon svg { width: 20px; height: 20px; color: var(--green); }
+  .feature h3 { font-family: var(--serif); font-size: 19px; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.01em; }
+  .feature p { font-size: 13px; color: var(--ink-dim); line-height: 1.55; }
+
+  /* COMPARISON / HOW IT WORKS */
+  .steps-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 36px; }
+  .step-card { background: var(--panel-2); border: 1px solid var(--line); padding: 20px; border-radius: 2px; }
+  .step-card .snum { font-family: var(--serif); font-size: 42px; font-weight: 800; color: var(--green); line-height: 1; margin-bottom: 12px; }
+  .step-card h4 { font-family: var(--serif); font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+  .step-card p { font-size: 12px; color: var(--ink-dim); line-height: 1.5; }
+
+  /* PRICING */
+  .pricing-card { max-width: 480px; margin: 36px auto 0; background: var(--panel); border: 1px solid var(--green-dim); padding: 36px; border-radius: 2px; position: relative; }
+  .pricing-card::after { content: 'POPULAIRE'; position: absolute; top: -10px; right: 20px; background: var(--yellow); color: #000; font-family: var(--mono); font-size: 9px; font-weight: 800; padding: 4px 10px; letter-spacing: 0.15em; border-radius: 2px; }
+  .pricing-name { font-family: var(--mono); font-size: 11px; color: var(--green); letter-spacing: 0.2em; text-transform: uppercase; }
+  .pricing-price { font-family: var(--serif); font-size: 60px; font-weight: 800; line-height: 1; margin-top: 12px; letter-spacing: -0.03em; }
+  .pricing-price .currency { font-size: 22px; color: var(--ink-dim); }
+  .pricing-sub { font-family: var(--mono); font-size: 11px; color: var(--ink-dim); margin-top: 6px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .pricing-features { list-style: none; padding: 0; margin: 26px 0; }
+  .pricing-features li { padding: 8px 0; font-size: 13px; display: flex; gap: 10px; align-items: flex-start; border-bottom: 1px dashed var(--line); }
+  .pricing-features li::before { content: '✓'; color: var(--green); font-weight: 800; }
+  .pricing-features li:last-child { border-bottom: none; }
+  .pricing-cta { width: 100%; background: var(--green); color: #001008; border: none; padding: 16px; font-family: var(--mono); font-size: 13px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; border-radius: 2px; }
+  .pricing-free-note { text-align: center; font-family: var(--mono); font-size: 11px; color: var(--green); margin-top: 14px; letter-spacing: 0.05em; }
+
+  /* FAQ */
+  .faq-item { background: var(--panel); border: 1px solid var(--line); padding: 18px 20px; border-radius: 2px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
+  .faq-q { font-family: var(--serif); font-size: 16px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+  .faq-q::after { content: '+'; font-family: var(--mono); font-size: 20px; color: var(--green); transition: 0.2s; }
+  .faq-item.open .faq-q::after { content: '−'; transform: rotate(180deg); }
+  .faq-a { font-size: 13px; color: var(--ink-dim); line-height: 1.6; margin-top: 0; max-height: 0; overflow: hidden; transition: 0.3s; }
+  .faq-item.open .faq-a { max-height: 300px; margin-top: 12px; }
+
+  /* CTA FINAL */
+  .land-final-cta { background: linear-gradient(135deg, var(--panel) 0%, var(--bg-2) 100%); border: 1px solid var(--green-dim); padding: 48px 32px; border-radius: 2px; text-align: center; margin-top: 60px; position: relative; overflow: hidden; }
+  .land-final-cta::after { content: ''; position: absolute; right: -80px; top: -80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(70,217,124,0.12), transparent 70%); pointer-events: none; }
+  .land-final-cta h2 { font-family: var(--serif); font-size: clamp(28px, 5vw, 44px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+  .land-final-cta h2 em { font-style: italic; font-weight: 400; color: var(--yellow); }
+  .land-final-cta p { color: var(--ink-dim); font-size: 15px; line-height: 1.5; margin-top: 12px; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .land-final-cta button { margin-top: 24px; background: var(--green); color: #001008; border: none; padding: 18px 32px; font-family: var(--mono); font-size: 13px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; border-radius: 2px; }
+
+  /* FOOTER */
+  .land-footer { padding: 40px 0 0; border-top: 1px solid var(--line); margin-top: 60px; font-family: var(--mono); font-size: 10px; color: var(--ink-faint); text-align: center; letter-spacing: 0.1em; text-transform: uppercase; }
+  .land-flag { display: inline-block; margin: 0 6px; width: 12px; height: 8px; background: linear-gradient(90deg, #00853f 33%, #fdef42 33% 66%, #e31b23 66%); vertical-align: middle; }
+
+  @media (max-width: 700px) {
+    .landing-inner { padding: 18px 16px 60px; }
+    .land-hero { padding: 24px 0 40px; }
+    .land-section { padding: 40px 0; }
+    .pricing-card { padding: 24px; }
+    .land-final-cta { padding: 32px 18px; }
+  }
+
   /* =================== LAYOUT =================== */
   .app { position: relative; z-index: 1; min-height: 100vh; display: flex; }
 
@@ -217,6 +319,50 @@
   /* GENERATE WRAP (sticky bottom in atelier) */
   .generate-wrap { position: sticky; bottom: 0; left: 0; right: 0; padding: 12px 0 0; background: linear-gradient(180deg, transparent, var(--bg) 30%); z-index: 20; margin-top: 16px; }
 
+  /* ATELIER TABS */
+  .atelier-tabs { display: flex; gap: 0; margin-bottom: 20px; background: var(--bg); border: 1px solid var(--line-2); border-radius: 2px; overflow: hidden; }
+  .atelier-tab { flex: 1; padding: 14px; font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-dim); cursor: pointer; text-align: center; border: none; background: transparent; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .atelier-tab:hover { color: var(--ink); }
+  .atelier-tab.active { background: rgba(70,217,124,0.08); color: var(--green); }
+  .atelier-content { display: none; }
+  .atelier-content.active { display: block; animation: fadeIn 0.3s; }
+
+  /* FILE DROP */
+  .file-drop { border: 2px dashed var(--line-2); padding: 32px 20px; text-align: center; border-radius: 2px; cursor: pointer; transition: 0.2s; background: var(--bg); }
+  .file-drop:hover { border-color: var(--green); background: rgba(70,217,124,0.03); }
+  .file-drop.has-file { border-color: var(--green); background: rgba(70,217,124,0.05); }
+  .file-drop svg { color: var(--ink-faint); margin-bottom: 10px; }
+  .file-drop:hover svg, .file-drop.has-file svg { color: var(--green); }
+  .file-drop .fd-text { font-family: var(--mono); font-size: 13px; color: var(--ink); font-weight: 500; }
+  .file-drop .fd-sub { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); margin-top: 6px; letter-spacing: 0.08em; }
+
+  /* AUDIT FINDINGS */
+  .audit-finding { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .audit-finding:last-child { border-bottom: none; }
+  .af-icon { width: 32px; height: 32px; min-width: 32px; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono); font-weight: 800; font-size: 14px; }
+  .af-icon.ok { background: rgba(70,217,124,0.12); color: var(--green); border: 1px solid var(--green-dim); }
+  .af-icon.warn { background: rgba(245,197,66,0.12); color: var(--yellow); border: 1px solid rgba(245,197,66,0.3); }
+  .af-icon.error { background: rgba(232,83,63,0.12); color: var(--red); border: 1px solid rgba(232,83,63,0.3); }
+  .af-icon.info { background: rgba(74,158,255,0.12); color: var(--blue); border: 1px solid rgba(74,158,255,0.3); }
+  .af-body { flex: 1; }
+  .af-title { font-family: var(--serif); font-size: 15px; font-weight: 600; }
+  .af-desc { font-size: 12px; color: var(--ink-dim); line-height: 1.5; margin-top: 4px; }
+  .af-fix { font-family: var(--mono); font-size: 11px; color: var(--green); margin-top: 8px; padding: 8px 10px; background: rgba(70,217,124,0.05); border-left: 2px solid var(--green); border-radius: 2px; white-space: pre-wrap; word-break: break-all; }
+
+  /* SCORE BADGE */
+  .score-bar { background: var(--bg); padding: 18px; border-radius: 2px; margin-bottom: 18px; }
+  .score-bar .scl { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .score-bar .scl-l { font-family: var(--mono); font-size: 11px; color: var(--ink-dim); letter-spacing: 0.15em; text-transform: uppercase; }
+  .score-bar .scl-v { font-family: var(--serif); font-size: 32px; font-weight: 800; line-height: 1; }
+  .score-bar .scl-v.good { color: var(--green); }
+  .score-bar .scl-v.medium { color: var(--yellow); }
+  .score-bar .scl-v.bad { color: var(--red); }
+  .score-bar-fill { height: 8px; background: var(--line-2); border-radius: 4px; overflow: hidden; }
+  .score-bar-fill .fill { height: 100%; transition: width 0.6s ease-out; }
+  .score-bar-fill .fill.good { background: var(--green); }
+  .score-bar-fill .fill.medium { background: var(--yellow); }
+  .score-bar-fill .fill.bad { background: var(--red); }
+
   /* PAYMENT MODAL */
   .pay-info { background:var(--bg); border:1px solid var(--green-dim); padding:18px; border-radius:2px; margin-bottom:18px; }
   .pay-price { font-family:var(--serif); font-size:36px; font-weight:800; color:var(--green); letter-spacing:-0.02em; line-height:1; }
@@ -300,8 +446,191 @@
 </head>
 <body>
 
+<!-- ========== LANDING PAGE (visiteurs non connectés) ========== -->
+<div class="landing" id="landingPage">
+  <div class="landing-inner">
+
+    <!-- NAV -->
+    <nav class="land-nav">
+      <div class="land-brand">
+        <div class="sb-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#46d97c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8S2 12 2 12z"/>
+            <circle cx="12" cy="12" r="3" fill="#46d97c"/>
+          </svg>
+        </div>
+        <div>
+          <div class="name">SIKHANE<em>-TECH</em></div>
+          <div class="tag">Mikrotik · Sénégal</div>
+        </div>
+      </div>
+      <div class="land-nav-btns">
+        <button onclick="goToAuth('login')">Connexion</button>
+        <button class="primary" onclick="goToAuth('signup')">S'inscrire</button>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="land-hero">
+      <div class="land-eyebrow"><span class="dot"></span> Made in Sénégal <span style="margin-left:6px;">🇸🇳</span></div>
+      <h1 class="land-h1">Configure tes <em>Mikrotik</em> en <span class="accent">3 minutes</span>.</h1>
+      <p class="land-lede">Le configurateur intelligent pour gérants WiFi Zone du Sénégal. Hotspot Mikhmon, anti-partage TTL, expiration vraie des tickets — tout généré en quelques clics, sans ligne de commande.</p>
+      <div class="land-cta">
+        <button class="btn-big" onclick="goToAuth('signup')">Essayer gratuitement →</button>
+        <button class="btn-big-sec" onclick="scrollToSection('how')">Voir comment ça marche</button>
+      </div>
+      <div class="land-trust">
+        <span><span class="check">✓</span> 1ère config gratuite</span>
+        <span><span class="check">✓</span> Wave · Orange Money · Free</span>
+        <span><span class="check">✓</span> Sans installation</span>
+      </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="land-section" id="features">
+      <div class="land-section-eyebrow">Ce que tu peux faire</div>
+      <h2 class="land-section-title">Tout ce qu'il faut pour un <em>WiFi Zone</em> pro.</h2>
+      <p class="land-section-sub">SIKHANE-TECH génère des configs RouterOS dignes des plus grands installateurs — sans que tu aies à taper une seule commande Mikrotik.</p>
+
+      <div class="features-grid">
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg></div>
+          <h3>Hotspot Mikhmon</h3>
+          <p>Configuration complète avec page captive, profils de tickets et serveur DHCP. Compatible Mikhmon online et desktop.</p>
+        </div>
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="12 6 12 12 16 14"/><circle cx="12" cy="12" r="10"/></svg></div>
+          <h3>Expiration vraie des tickets</h3>
+          <p>Le fameux script <strong>on-login</strong> qui corrige le bug Mikhmon — les tickets expirent vraiment quand leur durée est écoulée.</p>
+        </div>
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h3>Anti-partage TTL</h3>
+          <p>Empêche tes clients de partager leur connexion via tethering. Plus de revenus perdus par hotspot relayé.</p>
+        </div>
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10"/><path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14"/></svg></div>
+          <h3>Auto-heal firewall</h3>
+          <p>Un script automatique recrée les règles firewall si elles disparaissent. Ta config reste solide même après un reboot.</p>
+        </div>
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="18" x2="6.01" y2="18"/><line x1="10" y1="18" x2="10.01" y2="18"/><path d="M22 8H2"/><path d="M5 8V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4"/></svg></div>
+          <h3>Gestion de ton parc</h3>
+          <p>Enregistre tous tes routeurs (hAP, RB951, CCR…) avec leur emplacement, IP, statut. Garde une vue d'ensemble de ton parc.</p>
+        </div>
+        <div class="feature">
+          <div class="ficon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+          <h3>Vérificateur de config</h3>
+          <p>Tu as déjà une config ? Uploade-la, l'IA t'audite : sécurité, walled garden, optimisations. <em>Bientôt disponible.</em></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="land-section" id="how">
+      <div class="land-section-eyebrow">Comment ça marche</div>
+      <h2 class="land-section-title">De l'inscription à <em>la config</em>, en 3 minutes.</h2>
+      <p class="land-section-sub">Pas de tunnel à installer. Pas de serveur à configurer. Juste un formulaire, et un script `.rsc` prêt à copier dans Winbox.</p>
+
+      <div class="steps-list">
+        <div class="step-card">
+          <div class="snum">01</div>
+          <h4>Inscris-toi gratuitement</h4>
+          <p>Email + mot de passe. Pas de carte bancaire. Premier accès en 30 secondes.</p>
+        </div>
+        <div class="step-card">
+          <div class="snum">02</div>
+          <h4>Remplis le formulaire</h4>
+          <p>Nom du site, SSID, profils de tickets, options. 4 sections claires, en français.</p>
+        </div>
+        <div class="step-card">
+          <div class="snum">03</div>
+          <h4>Paie via Mobile Money</h4>
+          <p>10 000 FCFA via Wave, Orange Money ou Free Money. Validation manuelle en 5-30 min.</p>
+        </div>
+        <div class="step-card">
+          <div class="snum">04</div>
+          <h4>Colle dans Winbox</h4>
+          <p>Récupère ton script `.rsc`, importe-le sur ta borne Mikrotik. C'est en ligne.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section class="land-section" id="pricing">
+      <div class="land-section-eyebrow" style="justify-content:center;">Tarif simple</div>
+      <h2 class="land-section-title" style="text-align:center;margin:0 auto;">Un prix unique. <em>Pas d'abonnement.</em></h2>
+      <p class="land-section-sub" style="text-align:center;margin:14px auto 0;">Paie uniquement quand tu génères une config. Pas de frais cachés, pas de surprises.</p>
+
+      <div class="pricing-card">
+        <div class="pricing-name">Configuration unique</div>
+        <div class="pricing-price">10 000 <span class="currency">FCFA</span></div>
+        <div class="pricing-sub">Par configuration générée</div>
+
+        <ul class="pricing-features">
+          <li>Configuration RouterOS complète</li>
+          <li>Hotspot Mikhmon avec expiration vraie</li>
+          <li>Anti-partage TTL inclus</li>
+          <li>Profils de tickets personnalisables</li>
+          <li>Auto-heal firewall</li>
+          <li>Sauvegardée dans ton compte à vie</li>
+          <li>Téléchargement `.rsc` illimité</li>
+        </ul>
+
+        <button class="pricing-cta" onclick="goToAuth('signup')">Commencer maintenant →</button>
+        <div class="pricing-free-note">🎁 1 configuration gratuite chaque mois</div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="land-section" id="faq">
+      <div class="land-section-eyebrow">Questions fréquentes</div>
+      <h2 class="land-section-title">Tu te demandes <em>peut-être</em>...</h2>
+      <div style="margin-top: 28px;">
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-q">Sur quels modèles Mikrotik ça marche ?</div>
+          <div class="faq-a">Tous les Mikrotik tournant sous RouterOS 6.x ou 7.x : hAP ac/lite, RB951, RB750, CCR, Audience… Le script est universel et s'adapte automatiquement.</div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-q">Faut-il que ma borne soit accessible depuis internet ?</div>
+          <div class="faq-a">Non. Tu génères la config sur SIKHANE-TECH, tu la copies dans Winbox local. Pas besoin d'IP publique ni de VPN.</div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-q">Combien de temps avant que mon paiement soit validé ?</div>
+          <div class="faq-a">Généralement entre 5 et 30 minutes en journée. La validation est manuelle — un admin vérifie le paiement Mobile Money puis débloque ta config.</div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-q">Puis-je modifier ma config après génération ?</div>
+          <div class="faq-a">Toutes tes configs restent dans ton historique. Tu peux les revoir, télécharger à nouveau, ou en générer une nouvelle (gratuite chaque mois).</div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-q">Et le paiement à distance des bornes ?</div>
+          <div class="faq-a">Pour l'instant SIKHANE-TECH génère les configs que tu déploies manuellement (copier-coller dans Winbox). La configuration à distance via VPN arrivera dans la prochaine version.</div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('open')">
+          <div class="faq-q">Mes données sont-elles sécurisées ?</div>
+          <div class="faq-a">Oui. Tes configs sont stockées sur Supabase (infrastructure Européenne) avec chiffrement et politique RLS — personne d'autre que toi ne peut voir tes configs.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <div class="land-final-cta">
+      <h2>Prêt à <em>professionnaliser</em><br>tes WiFi Zone ?</h2>
+      <p>Rejoins les gérants qui utilisent déjà SIKHANE-TECH pour déployer leurs Mikrotik comme des pros.</p>
+      <button onclick="goToAuth('signup')">Créer mon compte →</button>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="land-footer">
+      SIKHANE-TECH · Made for Sénégal <span class="land-flag"></span> · Tous droits réservés
+    </footer>
+
+  </div>
+</div>
+
 <!-- ========== AUTH SCREEN ========== -->
-<div class="auth-screen" id="authScreen">
+<div class="auth-screen hidden" id="authScreen">
   <div class="auth-box">
     <div class="auth-logo">
       <svg viewBox="0 0 24 24" fill="none" stroke="#46d97c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -447,9 +776,24 @@
     <div class="page" id="page-atelier">
       <div class="page-head">
         <div class="page-eyebrow">Atelier de configuration</div>
-        <h1 class="page-title">Configs <em>professionnelles</em></h1>
-        <p class="page-lede">Génère une config RouterOS complète : bridge unifié, hotspot Mikhmon avec vraie expiration, anti-partage TTL, auto-heal.</p>
+        <h1 class="page-title">Atelier <em>SIKHANE-TECH</em></h1>
+        <p class="page-lede">Génère une nouvelle config RouterOS, ou audite une config existante pour détecter les failles de sécurité et les optimisations possibles.</p>
       </div>
+
+      <!-- Onglets atelier -->
+      <div class="atelier-tabs">
+        <button class="atelier-tab active" data-atab="generator" onclick="atelierTab('generator')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Générateur
+        </button>
+        <button class="atelier-tab" data-atab="verifier" onclick="atelierTab('verifier')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c2.4 0 4.59.94 6.21 2.47"/></svg>
+          Vérificateur IA
+        </button>
+      </div>
+
+      <!-- TAB : GENERATEUR -->
+      <div class="atelier-content active" id="atab-generator">
 
       <!-- SECTION 1 : SITE -->
       <section class="card" data-section="1">
@@ -546,6 +890,50 @@
 
       <div class="generate-wrap">
         <button class="btn-primary" onclick="generate()">Générer la configuration →</button>
+      </div>
+
+      </div>
+
+      <!-- TAB : VERIFICATEUR -->
+      <div class="atelier-content" id="atab-verifier">
+
+        <section class="card">
+          <div class="card-head">
+            <div class="card-num">AUDIT IA</div>
+            <div class="card-title">Vérificateur de config</div>
+            <div class="card-desc">Colle ta config RouterOS (export <code>/export</code>) ou uploade un fichier <code>.rsc</code>. L'audit analyse 12 points clés : sécurité, walled garden, firewall, bande passante, anti-partage…</div>
+          </div>
+          <div class="card-body">
+            <div class="field">
+              <label>Ton fichier .rsc <span class="hint">drag & drop ou clique pour parcourir</span></label>
+              <div class="file-drop" id="fileDrop" onclick="document.getElementById('rscFile').click()">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <div class="fd-text">Clique pour sélectionner un fichier .rsc</div>
+                <div class="fd-sub">ou colle directement le contenu ci-dessous</div>
+              </div>
+              <input type="file" id="rscFile" accept=".rsc,.txt,text/plain" style="display:none;" onchange="handleRscFile(this)" />
+            </div>
+
+            <div class="field">
+              <label>Ou colle le contenu ici</label>
+              <textarea id="rscPaste" rows="8" placeholder="# Coller ici le contenu de l'export RouterOS&#10;/system identity set name=...&#10;/interface bridge add name=..." style="font-family:var(--mono);font-size:11px;resize:vertical;min-height:160px;"></textarea>
+            </div>
+
+            <button class="btn-primary" onclick="runAudit()">🔍 Auditer cette configuration</button>
+          </div>
+        </section>
+
+        <!-- Résultats audit -->
+        <div id="auditResults" style="display:none;margin-top:16px;">
+          <section class="card">
+            <div class="card-head">
+              <div class="card-num" id="auditScore">SCORE : —</div>
+              <div class="card-title">Résultats de l'audit</div>
+            </div>
+            <div class="card-body" id="auditFindings"></div>
+          </section>
+        </div>
+
       </div>
     </div>
 
@@ -761,14 +1149,14 @@
   const PAYMENT_AMOUNT = 10000; // FCFA
   // ============================================================
 
-  const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-  let currentUser = null;
-  let isAdmin = false;
-  let pendingConfigData = null;
-  let currentPage = 'dashboard';
+  var supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  var currentUser = null;
+  var isAdmin = false;
+  var pendingConfigData = null;
+  var currentPage = 'dashboard';
+  var authMode = 'login';
 
   // ===== AUTH =====
-  let authMode = 'login';
   function authTab(t) {
     authMode = t;
     document.querySelectorAll('.auth-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
@@ -806,6 +1194,7 @@
   }
 
   async function enterApp() {
+    document.getElementById('landingPage').classList.add('hidden');
     document.getElementById('authScreen').classList.add('hidden');
     document.getElementById('mainApp').style.display = 'flex';
     document.getElementById('userEmail').textContent = currentUser.email;
@@ -837,8 +1226,22 @@
 
   (async () => {
     const { data } = await supa.auth.getSession();
-    if (data.session) { currentUser = data.session.user; await enterApp(); }
+    if (data.session) {
+      currentUser = data.session.user;
+      document.getElementById('landingPage').classList.add('hidden');
+      await enterApp();
+    }
   })();
+
+  function goToAuth(mode) {
+    document.getElementById('landingPage').classList.add('hidden');
+    document.getElementById('authScreen').classList.remove('hidden');
+    authTab(mode);
+  }
+
+  function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
   // ===== NAVIGATION =====
   function navTo(page) {
@@ -908,7 +1311,7 @@
   }
 
   // ===== ATELIER (générateur) =====
-  let profiles = [
+  var profiles = [
     { name: '1H', duration: '1h', price: 100, rate: '1M/2M' },
     { name: '2H', duration: '2h', price: 200, rate: '1M/2M' },
     { name: '24H', duration: '1d', price: 500, rate: '2M/4M' },
@@ -1084,7 +1487,7 @@
   }
 
   // ===== PAIEMENT =====
-  let selectedMethod = 'wave';
+  var selectedMethod = 'wave';
   function selectMethod(m) {
     selectedMethod = m;
     document.querySelectorAll('.pay-method-card').forEach(c => c.dataset.selected = c.dataset.method === m ? 'true' : 'false');
@@ -1255,7 +1658,7 @@
   }
 
   // ===== ADMIN =====
-  let currentAdminTab = 'pending';
+  var currentAdminTab = 'pending';
   async function adminTab(status) {
     currentAdminTab = status;
     document.querySelectorAll('.admin-tab').forEach(t => t.classList.toggle('active', t.dataset.status === status));
@@ -1322,6 +1725,218 @@
     }).eq('id', id);
     if (error) { alert(error.message); return; }
     await loadAdminPayments();
+  }
+
+  // ===== ATELIER TABS =====
+  function atelierTab(name) {
+    document.querySelectorAll('.atelier-tab').forEach(t => t.classList.toggle('active', t.dataset.atab === name));
+    document.querySelectorAll('.atelier-content').forEach(c => c.classList.toggle('active', c.id === 'atab-' + name));
+  }
+
+  // ===== VÉRIFICATEUR DE CONFIG =====
+  function handleRscFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      document.getElementById('rscPaste').value = e.target.result;
+      document.getElementById('fileDrop').classList.add('has-file');
+      document.querySelector('#fileDrop .fd-text').textContent = '✓ ' + file.name + ' (' + Math.round(file.size/1024) + ' Ko)';
+      document.querySelector('#fileDrop .fd-sub').textContent = 'Clique « Auditer » pour lancer l\'analyse';
+    };
+    reader.readAsText(file);
+  }
+
+  // Drag & drop
+  (function setupDrop() {
+    const dropZone = document.getElementById('fileDrop');
+    if (!dropZone) return;
+    ['dragenter','dragover','dragleave','drop'].forEach(evt => {
+      dropZone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); });
+    });
+    dropZone.addEventListener('drop', (e) => {
+      const f = e.dataTransfer.files[0];
+      if (!f) return;
+      document.getElementById('rscFile').files = e.dataTransfer.files;
+      handleRscFile(document.getElementById('rscFile'));
+    });
+  })();
+
+  function runAudit() {
+    const content = document.getElementById('rscPaste').value.trim();
+    if (!content) { alert('Colle ou uploade ta config .rsc d\'abord.'); return; }
+    if (content.length < 100) { alert('La config semble trop courte pour être valide.'); return; }
+
+    const findings = [];
+
+    // === RÈGLES D'AUDIT ===
+
+    // 1. Mot de passe admin
+    if (!/\/user\s+set\s+admin\s+password/i.test(content) && !/\/user\s+set\s+\[?\s*find\s+name=admin\]?\s+password/i.test(content)) {
+      findings.push({ level:'error', title:'Mot de passe admin non défini',
+        desc:'Aucune commande `/user set admin password=...` détectée. N\'importe qui ayant accès au réseau peut prendre le contrôle du routeur.',
+        fix:'/user set admin password="VotreMotDePasseFort2026!"' });
+    } else {
+      findings.push({ level:'ok', title:'Mot de passe admin configuré',
+        desc:'Le mot de passe admin est défini dans la config.' });
+    }
+
+    // 2. WiFi sécurité
+    const wifiOpen = /security-profiles[^]*mode=none/i.test(content) || /ssid=[^]*?(?!.*wpa)/i.test(content);
+    if (/\/interface wireless/i.test(content)) {
+      findings.push({ level:'info', title:'Configuration WiFi détectée',
+        desc:'WiFi en mode ouvert (sans WPA). C\'est normal pour un hotspot avec portail captif, mais à vérifier que le hotspot intercepte bien toutes les connexions.' });
+    }
+
+    // 3. Walled garden
+    if (/\/ip hotspot walled-garden/i.test(content)) {
+      const matches = content.match(/\/ip hotspot walled-garden\s+add/g) || [];
+      findings.push({ level:'ok', title:'Walled garden configuré',
+        desc:matches.length + ' règle(s) walled garden. Les apps de paiement Mobile Money sont autorisées avant login.' });
+    } else {
+      findings.push({ level:'warn', title:'Walled garden vide',
+        desc:'Aucun walled garden configuré. Tes clients ne peuvent pas accéder à Wave/OM/Free avant d\'avoir un ticket. OK si tu vends en cash (Mikhmon), mais bloquant si paiement par Mobile Money.',
+        fix:'/ip hotspot walled-garden\nadd dst-host=*.wave.com action=allow comment="Wave"\nadd dst-host=*.orange.sn action=allow comment="Orange Money"\nadd dst-host=*.free.sn action=allow comment="Free Money"' });
+    }
+
+    // 4. Rate limit / bande passante
+    const profilesWithRate = (content.match(/\/ip hotspot user profile[^]*?rate-limit=/g) || []).length;
+    const profilesTotal = (content.match(/\/ip hotspot user profile\s+(?:\n[^\/])*?add\s+name=/g) || content.match(/^add\s+name=\w+/gm) || []).length;
+    if (!/rate-limit=/i.test(content)) {
+      findings.push({ level:'warn', title:'Aucune limitation de bande passante',
+        desc:'Aucun `rate-limit` détecté sur les profils. Un seul client peut saturer ta connexion WAN. Ajoute des limites selon ta vitesse internet.',
+        fix:'/ip hotspot user profile set [find name=PROFIL_2H] rate-limit=1M/2M' });
+    } else {
+      findings.push({ level:'ok', title:'Limitation de bande passante active',
+        desc:'Le rate-limit est configuré sur au moins un profil. Tes clients sont bridés selon le plan choisi.' });
+    }
+
+    // 5. Anti-partage TTL
+    if (/change-ttl/i.test(content) && /hotspot=auth/i.test(content)) {
+      findings.push({ level:'ok', title:'Anti-partage TTL actif',
+        desc:'Le mangle TTL est configuré : tes clients ne peuvent pas partager leur connexion par tethering. Bonne sécurité contre les revenus perdus.' });
+    } else {
+      findings.push({ level:'warn', title:'Anti-partage TTL absent',
+        desc:'Pas de règle mangle TTL détectée. Les clients peuvent partager leur ticket via tethering.',
+        fix:'/ip firewall mangle\nadd action=change-ttl chain=postrouting comment="Anti-partage TTL" hotspot=auth new-ttl=set:1 passthrough=no' });
+    }
+
+    // 6. NAT
+    if (/\/ip firewall nat[^]*?action=masquerade/i.test(content)) {
+      findings.push({ level:'ok', title:'NAT configuré',
+        desc:'La règle de NAT (masquerade) est en place. Tes clients peuvent accéder à internet.' });
+    } else {
+      findings.push({ level:'error', title:'NAT manquant',
+        desc:'Aucune règle NAT masquerade détectée. Tes clients n\'auront pas accès à internet.',
+        fix:'/ip firewall nat\nadd action=masquerade chain=srcnat out-interface=ether1' });
+    }
+
+    // 7. DNS
+    if (/\/ip dns[^]*?allow-remote-requests=yes/i.test(content)) {
+      findings.push({ level:'ok', title:'Serveur DNS local actif',
+        desc:'Le routeur agit comme cache DNS pour tes clients. Bonne pratique pour la performance.' });
+    } else if (/\/ip dns/i.test(content)) {
+      findings.push({ level:'info', title:'DNS configuré (sans cache)',
+        desc:'DNS configuré mais sans cache local. Tu peux activer `allow-remote-requests=yes` pour accélérer la résolution.' });
+    }
+
+    // 8. Firewall input
+    if (/\/ip firewall filter/i.test(content) && /chain=input/i.test(content)) {
+      findings.push({ level:'ok', title:'Firewall input configuré',
+        desc:'Des règles firewall existent sur la chaîne input. Le routeur a une protection de base.' });
+    } else {
+      findings.push({ level:'warn', title:'Firewall input minimal',
+        desc:'Peu ou pas de règles firewall sur la chaîne input. Le routeur pourrait être exposé.',
+        fix:'/ip firewall filter\nadd action=drop chain=input in-interface=ether1 comment="Drop WAN input"' });
+    }
+
+    // 9. Hotspot server
+    if (/\/ip hotspot\s+add/i.test(content) || /\/ip hotspot\nadd/i.test(content)) {
+      findings.push({ level:'ok', title:'Serveur hotspot actif',
+        desc:'Un serveur hotspot est créé. La page captive devrait s\'afficher pour tes clients.' });
+    } else {
+      findings.push({ level:'error', title:'Serveur hotspot manquant',
+        desc:'Aucun serveur hotspot détecté. Tes clients ne verront pas la page captive et auront un accès libre.' });
+    }
+
+    // 10. DHCP server
+    if (/\/ip dhcp-server\s+add/i.test(content) || /\/ip dhcp-server\nadd/i.test(content)) {
+      findings.push({ level:'ok', title:'DHCP server actif',
+        desc:'Le DHCP distribue automatiquement des IPs aux clients connectés.' });
+    } else {
+      findings.push({ level:'error', title:'DHCP server manquant',
+        desc:'Aucun serveur DHCP détecté. Les clients devront entrer leur IP manuellement.' });
+    }
+
+    // 11. Script Mikhmon on-login (expiration vraie)
+    if (/on-login=/i.test(content) && /system script add/i.test(content)) {
+      findings.push({ level:'ok', title:'Script Mikhmon on-login présent',
+        desc:'Le script qui corrige l\'expiration des tickets est en place. Tes tickets expireront vraiment à la fin de leur durée.' });
+    } else if (/on-login=/i.test(content)) {
+      findings.push({ level:'info', title:'on-login basique détecté',
+        desc:'Un script on-login existe mais ne semble pas être le script Mikhmon complet. Les tickets pourraient ne pas expirer correctement.' });
+    } else {
+      findings.push({ level:'warn', title:'Pas de script on-login Mikhmon',
+        desc:'Sans ce script, les tickets ne se désactivent pas automatiquement à expiration — les clients peuvent continuer à se connecter avec un ticket "expiré".' });
+    }
+
+    // 12. Export complet ou tronqué ?
+    if (/#interrupted/i.test(content) || /# interrupted/i.test(content)) {
+      findings.push({ level:'warn', title:'Export interrompu',
+        desc:'Le fichier contient `# interrupted` — l\'export RouterOS a été coupé. Refais un export complet : `/export file=backup-complet`',
+        fix:'/export file=backup-complet show-sensitive' });
+    }
+
+    // === CALCUL SCORE ===
+    const total = findings.length;
+    const errors = findings.filter(f => f.level === 'error').length;
+    const warns = findings.filter(f => f.level === 'warn').length;
+    const oks = findings.filter(f => f.level === 'ok').length;
+    let score = Math.round((oks / total) * 100 - (errors * 8) - (warns * 4));
+    score = Math.max(0, Math.min(100, score));
+    const scoreClass = score >= 75 ? 'good' : score >= 50 ? 'medium' : 'bad';
+    const scoreLabel = score >= 75 ? 'Excellent' : score >= 50 ? 'À améliorer' : 'Critique';
+
+    // === AFFICHAGE ===
+    let html = `
+      <div class="score-bar">
+        <div class="scl">
+          <div class="scl-l">Score de sécurité</div>
+          <div class="scl-v ${scoreClass}">${score}<span style="font-size:14px;color:var(--ink-dim);"> / 100</span></div>
+        </div>
+        <div class="score-bar-fill"><div class="fill ${scoreClass}" style="width:${score}%;"></div></div>
+        <div style="margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--ink-dim);">
+          ${oks} OK · ${warns} avertissement(s) · ${errors} erreur(s) · ${scoreLabel}
+        </div>
+      </div>
+    `;
+
+    // Trier : errors d'abord, puis warns, puis info, puis ok
+    const order = { error: 0, warn: 1, info: 2, ok: 3 };
+    findings.sort((a, b) => order[a.level] - order[b.level]);
+
+    findings.forEach(f => {
+      const icon = { error:'!', warn:'⚠', info:'ℹ', ok:'✓' }[f.level];
+      html += `
+        <div class="audit-finding">
+          <div class="af-icon ${f.level}">${icon}</div>
+          <div class="af-body">
+            <div class="af-title">${escapeHtml(f.title)}</div>
+            <div class="af-desc">${escapeHtml(f.desc)}</div>
+            ${f.fix ? `<div class="af-fix">💡 Correctif suggéré :\n${escapeHtml(f.fix)}</div>` : ''}
+          </div>
+        </div>
+      `;
+    });
+
+    document.getElementById('auditFindings').innerHTML = html;
+    document.getElementById('auditScore').textContent = `SCORE : ${score}/100`;
+    document.getElementById('auditResults').style.display = 'block';
+
+    // Scroll to results
+    setTimeout(() => {
+      document.getElementById('auditResults').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   }
 </script>
 </body>
