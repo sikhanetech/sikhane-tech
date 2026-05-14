@@ -691,6 +691,10 @@
     <div class="auth-form">
       <div class="field"><label>Email</label><input type="email" id="authEmail" placeholder="votre@email.com" autocomplete="email" /></div>
       <div class="field"><label>Mot de passe</label><input type="password" id="authPass" placeholder="••••••••" autocomplete="current-password" /></div>
+      <div class="field" id="referralField" style="display:none;">
+        <label>Code de parrainage <span class="hint">optionnel</span></label>
+        <input type="text" id="authRefCode" placeholder="SIKH-XXXXX" style="text-transform:uppercase;letter-spacing:0.1em;" />
+      </div>
       <button class="auth-submit" id="authBtn" onclick="authSubmit()">Se connecter →</button>
       <div class="auth-msg" id="authMsg"></div>
     </div>
@@ -741,6 +745,11 @@
       <div class="sb-link" data-page="captive" onclick="navTo('captive')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         Page Captive
+      </div>
+      <div class="sb-link" data-page="referral" onclick="navTo('referral')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="17" cy="7" r="3"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
+        Parrainage
+        <span class="badge-num" id="navReferralCredits" style="display:none;background:var(--green);color:#001008;">0</span>
       </div>
 
       <div class="sb-section">Compte</div>
@@ -1202,6 +1211,101 @@
       </div>
     </div>
 
+    <!-- ========== PAGE: REFERRAL ========== -->
+    <div class="page" id="page-referral">
+      <div class="page-head">
+        <div class="page-eyebrow">🎁 Programme de parrainage</div>
+        <h1 class="page-title">Parraine, <em>gagne</em></h1>
+        <p class="page-lede">Invite d'autres gérants WiFi Zone à utiliser SIKHANE-TECH. Pour chaque filleul qui paie sa première config (10 000 FCFA), tu gagnes <strong>1 audit gratuit</strong> (valeur 3 000 FCFA).</p>
+      </div>
+
+      <!-- Stats parrainage -->
+      <div class="stats-grid" style="margin-bottom:24px;">
+        <div class="stat-card">
+          <div class="stat-label">Filleuls inscrits</div>
+          <div class="stat-value" id="refStatTotal">—</div>
+          <div class="stat-sub">Comptes créés avec ton code</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-label">En attente paiement</div>
+          <div class="stat-value" id="refStatPending">—</div>
+          <div class="stat-sub">Pas encore récompensés</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Audits gagnés</div>
+          <div class="stat-value" id="refStatEarned">—</div>
+          <div class="stat-sub">Total cumulé</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">Crédits restants</div>
+          <div class="stat-value" id="refStatCredits">—</div>
+          <div class="stat-sub">Audits à utiliser</div>
+        </div>
+      </div>
+
+      <!-- Code de parrainage -->
+      <section class="card">
+        <div class="card-head">
+          <div class="card-num">TON CODE</div>
+          <div class="card-title">Partage ton code unique</div>
+          <div class="card-desc">Tes amis utilisent ce code à l'inscription, et tu gagnes un audit à chaque fois qu'ils paient leur 1ère config.</div>
+        </div>
+        <div class="card-body">
+          <div style="background:var(--bg);border:2px solid var(--green-dim);border-radius:2px;padding:20px;text-align:center;margin-bottom:16px;">
+            <div style="font-family:var(--mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:8px;">Ton code de parrainage</div>
+            <div style="font-family:var(--serif);font-size:36px;font-weight:800;color:var(--green);letter-spacing:0.05em;" id="myRefCode">SIKH-•••••</div>
+          </div>
+
+          <div class="row" style="margin-bottom:16px;">
+            <button class="btn-sec" onclick="copyMyRefCode()" id="copyRefBtn">📋 Copier le code</button>
+            <button class="btn-sec" onclick="copyMyRefLink()" id="copyLinkBtn">🔗 Copier le lien</button>
+          </div>
+
+          <button class="btn-primary" style="background:#25D366;color:#fff;" onclick="shareWhatsApp()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:8px;display:inline-block;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.002-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413"/></svg>
+            Partager sur WhatsApp
+          </button>
+        </div>
+      </section>
+
+      <!-- Comment ça marche -->
+      <section class="card">
+        <div class="card-head">
+          <div class="card-num">COMMENT</div>
+          <div class="card-title">Le parrainage en 3 étapes</div>
+        </div>
+        <div class="card-body">
+          <div class="pay-steps" style="background:var(--bg-2);margin-bottom:0;">
+            <div class="pay-step">
+              <div class="pay-step-num">1</div>
+              <div class="pay-step-txt"><strong>Partage ton code</strong> à un gérant WiFi Zone (WhatsApp, SMS, en personne).</div>
+            </div>
+            <div class="pay-step">
+              <div class="pay-step-num">2</div>
+              <div class="pay-step-txt">Il <strong>s'inscrit sur SIKHANE-TECH</strong> en collant ton code dans le champ "Code de parrainage".</div>
+            </div>
+            <div class="pay-step">
+              <div class="pay-step-num">3</div>
+              <div class="pay-step-txt">Quand il <strong>paie sa 1ère config (10 000 FCFA)</strong> et que l'admin valide, tu reçois <strong>1 audit gratuit</strong> dans ton compte.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Liste des filleuls -->
+      <section class="card">
+        <div class="card-head">
+          <div class="card-num">FILLEULS</div>
+          <div class="card-title">Tes filleuls inscrits</div>
+        </div>
+        <div class="card-body">
+          <div id="refList" class="hist-list">
+            <div class="hist-empty">Chargement...</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
     <!-- ========== PAGE: HISTORY ========== -->
     <div class="page" id="page-history">
       <div class="page-head">
@@ -1416,15 +1520,36 @@
     document.querySelectorAll('.auth-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === t));
     document.getElementById('authBtn').textContent = t === 'login' ? 'Se connecter →' : 'Créer mon compte →';
     document.getElementById('authMsg').className = 'auth-msg';
+    document.getElementById('referralField').style.display = t === 'signup' ? 'block' : 'none';
   }
   async function authSubmit() {
     const email = document.getElementById('authEmail').value.trim();
     const pass = document.getElementById('authPass').value;
+    const refCode = document.getElementById('authRefCode').value.trim().toUpperCase();
     const msg = document.getElementById('authMsg');
     const btn = document.getElementById('authBtn');
     if (!email || !pass) { msg.className='auth-msg error'; msg.textContent='Email et mot de passe requis.'; return; }
     if (pass.length < 6) { msg.className='auth-msg error'; msg.textContent='Mot de passe : 6 caractères minimum.'; return; }
     btn.disabled = true; btn.textContent = '...';
+
+    // Si inscription avec code parrain, vérifier d'abord que le code existe
+    let referrerId = null;
+    if (authMode === 'signup' && refCode) {
+      const { data: refData, error: refErr } = await supa
+        .from('user_profiles')
+        .select('user_id')
+        .eq('referral_code', refCode)
+        .maybeSingle();
+      if (refErr || !refData) {
+        msg.className='auth-msg error';
+        msg.textContent = 'Code de parrainage invalide. Laisse vide ou vérifie le code.';
+        btn.disabled = false;
+        btn.textContent = 'Créer mon compte →';
+        return;
+      }
+      referrerId = refData.user_id;
+    }
+
     try {
       const result = authMode === 'login'
         ? await supa.auth.signInWithPassword({ email, password: pass })
@@ -1440,6 +1565,14 @@
         return;
       }
       currentUser = result.data.user;
+
+      // Si parrainage, lier le profil du nouvel user au parrain
+      if (authMode === 'signup' && referrerId && currentUser) {
+        // Attendre un peu que le trigger crée le profil
+        await new Promise(r => setTimeout(r, 600));
+        await supa.from('user_profiles').update({ referred_by: referrerId }).eq('user_id', currentUser.id);
+      }
+
       await enterApp();
     } catch (e) {
       msg.className='auth-msg error'; msg.textContent='Erreur : ' + e.message;
@@ -1469,7 +1602,36 @@
     } else {
       document.getElementById('profileRole').value = 'Utilisateur';
     }
+
+    // Charger profil utilisateur (code parrainage + crédits)
+    await loadUserProfile();
+
     await loadDashboard();
+  }
+
+  var myProfile = null;
+
+  async function loadUserProfile() {
+    const { data, error } = await supa.from('user_profiles').select('*').eq('user_id', currentUser.id).maybeSingle();
+    if (error) { console.error('loadUserProfile:', error); return; }
+
+    if (!data) {
+      // Pas de profil, en créer un (fallback si le trigger n'a pas marché)
+      const fallbackCode = 'SIKH-' + Math.random().toString(36).substring(2, 7).toUpperCase();
+      const { data: newP } = await supa.from('user_profiles').insert({
+        user_id: currentUser.id,
+        referral_code: fallbackCode
+      }).select().single();
+      myProfile = newP;
+    } else {
+      myProfile = data;
+    }
+
+    // Badge sidebar si crédits > 0
+    if (myProfile && myProfile.referral_credits > 0) {
+      document.getElementById('navReferralCredits').textContent = myProfile.referral_credits;
+      document.getElementById('navReferralCredits').style.display = 'inline-block';
+    }
   }
 
   async function logout() {
@@ -1503,13 +1665,14 @@
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + page).classList.add('active');
     document.querySelectorAll('.sb-link').forEach(l => l.classList.toggle('active', l.dataset.page === page));
-    const titles = { dashboard:'Dashboard', atelier:'Atelier', routers:'Mes Routeurs', mikhmon:'Mikhmon', captive:'Page Captive', history:'Historique', profile:'Profil', admin:'Admin' };
+    const titles = { dashboard:'Dashboard', atelier:'Atelier', routers:'Mes Routeurs', mikhmon:'Mikhmon', captive:'Page Captive', referral:'Parrainage', history:'Historique', profile:'Profil', admin:'Admin' };
     document.getElementById('mobileTitle').textContent = titles[page] || '';
     closeSidebar();
     if (page === 'dashboard') loadDashboard();
     if (page === 'routers') loadRouters();
     if (page === 'mikhmon') loadMikhmonChips();
     if (page === 'captive') { renderCaptTariffs(); updateCaptivePreview(); }
+    if (page === 'referral') loadReferral();
     if (page === 'history') loadHistory();
     if (page === 'admin') loadAdminPayments();
     window.scrollTo(0, 0);
@@ -2048,6 +2211,47 @@
       status:'validated', validated_by: currentUser.id, validated_at: new Date().toISOString()
     }).eq('id', id);
     if (updErr) { alert(updErr.message); return; }
+
+    // ===== PARRAINAGE : récompense au parrain si c'est la 1ère config payée du filleul =====
+    try {
+      const { count: previousPaidCount } = await supa
+        .from('payments')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', pay.user_id)
+        .eq('payment_type', 'config')
+        .eq('status', 'validated')
+        .neq('id', id);
+
+      if ((previousPaidCount || 0) === 0) {
+        // C'est la 1ère config validée pour ce filleul
+        const { data: filleulProfile } = await supa
+          .from('user_profiles')
+          .select('referred_by')
+          .eq('user_id', pay.user_id)
+          .maybeSingle();
+
+        if (filleulProfile && filleulProfile.referred_by) {
+          // Créditer le parrain
+          const { data: parrainProfile } = await supa
+            .from('user_profiles')
+            .select('referral_credits')
+            .eq('user_id', filleulProfile.referred_by)
+            .maybeSingle();
+
+          const currentCredits = parrainProfile?.referral_credits || 0;
+          await supa.from('user_profiles').update({
+            referral_credits: currentCredits + 1
+          }).eq('user_id', filleulProfile.referred_by);
+
+          alert('✓ Paiement validé + parrain récompensé d\'un audit gratuit !');
+          await loadAdminPayments();
+          return;
+        }
+      }
+    } catch (e) {
+      console.error('Erreur récompense parrainage:', e);
+    }
+
     await loadAdminPayments();
   }
 
@@ -2108,6 +2312,31 @@
 
   async function checkAuditPaymentAndRun() {
     if (!currentUser) { alert('Connecte-toi pour utiliser le vérificateur.'); return; }
+
+    // 1. PRIORITÉ : crédits parrainage gagnés
+    if (myProfile && myProfile.referral_credits > 0) {
+      if (!confirm(`🎁 Tu as ${myProfile.referral_credits} audit(s) gratuit(s) gagné(s) en parrainage.\n\nUtiliser 1 crédit pour cet audit ?`)) return;
+
+      const { data: ok } = await supa.rpc('use_referral_credit', { uid: currentUser.id });
+      if (ok) {
+        myProfile.referral_credits -= 1;
+        const badge = document.getElementById('navReferralCredits');
+        if (myProfile.referral_credits > 0) badge.textContent = myProfile.referral_credits;
+        else badge.style.display = 'none';
+
+        await supa.from('payments').insert({
+          user_id: currentUser.id, user_email: currentUser.email,
+          amount: 0, payment_method: 'referral', payer_phone: 'audit-credit-parrainage',
+          status: 'free', payment_type: 'audit',
+          site_name: 'Audit IA (crédit parrainage)', site_id: new Date().toISOString().split('T')[0],
+          rsc_content: pendingAuditContent.substring(0, 5000)
+        });
+        performAudit(pendingAuditContent);
+        setTimeout(() => alert('🎁 Crédit parrainage utilisé ! Reste : ' + myProfile.referral_credits), 100);
+        return;
+      }
+    }
+
     const { data: freeCount } = await supa.rpc('free_audits_used_this_month', { uid: currentUser.id });
     const isFree = (freeCount || 0) === 0;
 
@@ -2762,6 +2991,152 @@ SIKHANE-TECH · sikhane-tech.com
     a.click();
     URL.revokeObjectURL(url);
   }
+
+  // ============================================================
+  // PARRAINAGE
+  // ============================================================
+  async function loadReferral() {
+    if (!myProfile) await loadUserProfile();
+    if (!myProfile) return;
+
+    // Afficher le code
+    document.getElementById('myRefCode').textContent = myProfile.referral_code;
+
+    // Charger les filleuls
+    const { data: referrals, error } = await supa
+      .from('user_profiles')
+      .select('user_id, created_at')
+      .eq('referred_by', currentUser.id)
+      .order('created_at', { ascending: false });
+
+    if (error) { console.error(error); return; }
+
+    const totalReferrals = referrals ? referrals.length : 0;
+
+    // Pour chaque filleul, vérifier s'il a payé au moins une config validée
+    let paidCount = 0;
+    let pendingCount = 0;
+    const enrichedRefs = [];
+
+    if (referrals && referrals.length > 0) {
+      for (const r of referrals) {
+        const { data: paidConfigs } = await supa
+          .from('payments')
+          .select('id, created_at, amount')
+          .eq('user_id', r.user_id)
+          .eq('payment_type', 'config')
+          .eq('status', 'validated')
+          .order('created_at', { ascending: true })
+          .limit(1);
+
+        const hasPaid = paidConfigs && paidConfigs.length > 0;
+        if (hasPaid) paidCount++;
+        else pendingCount++;
+
+        // Récupérer email (depuis n'importe quel payment du filleul)
+        const { data: anyPay } = await supa
+          .from('payments')
+          .select('user_email')
+          .eq('user_id', r.user_id)
+          .limit(1)
+          .maybeSingle();
+
+        enrichedRefs.push({
+          ...r,
+          email: anyPay ? anyPay.user_email : '(inconnu)',
+          hasPaid,
+          paidAt: hasPaid ? paidConfigs[0].created_at : null
+        });
+      }
+    }
+
+    // Stats
+    document.getElementById('refStatTotal').textContent = totalReferrals;
+    document.getElementById('refStatPending').textContent = pendingCount;
+    document.getElementById('refStatEarned').textContent = paidCount;
+    document.getElementById('refStatCredits').textContent = myProfile.referral_credits || 0;
+
+    // Liste
+    const listEl = document.getElementById('refList');
+    if (enrichedRefs.length === 0) {
+      listEl.innerHTML = `<div class="hist-empty">Aucun filleul pour l'instant.<br><br>Partage ton code sur WhatsApp pour gagner tes premiers audits gratuits !</div>`;
+    } else {
+      listEl.innerHTML = enrichedRefs.map(r => {
+        const inscriptionDate = new Date(r.created_at).toLocaleDateString('fr-FR');
+        const status = r.hasPaid
+          ? `<span class="badge-status badge-validated">✓ Récompensé</span>`
+          : `<span class="badge-status badge-pending">⏳ Pas encore payé</span>`;
+        return `<div class="hist-item">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+            <div>
+              <div class="hist-name" style="font-size:14px;">${maskEmail(r.email)}</div>
+              <div class="hist-meta">Inscrit le ${inscriptionDate}</div>
+            </div>
+            ${status}
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  function maskEmail(email) {
+    if (!email || !email.includes('@')) return email;
+    const [local, domain] = email.split('@');
+    if (local.length <= 2) return local + '@' + domain;
+    return local.substring(0, 2) + '•••@' + domain;
+  }
+
+  function copyMyRefCode() {
+    if (!myProfile) return;
+    navigator.clipboard.writeText(myProfile.referral_code).then(() => {
+      const b = document.getElementById('copyRefBtn');
+      b.textContent = '✓ Code copié';
+      b.classList.add('copied');
+      setTimeout(() => { b.textContent = '📋 Copier le code'; b.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  function copyMyRefLink() {
+    if (!myProfile) return;
+    const link = window.location.origin + window.location.pathname + '?ref=' + myProfile.referral_code;
+    navigator.clipboard.writeText(link).then(() => {
+      const b = document.getElementById('copyLinkBtn');
+      b.textContent = '✓ Lien copié';
+      b.classList.add('copied');
+      setTimeout(() => { b.textContent = '🔗 Copier le lien'; b.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  function shareWhatsApp() {
+    if (!myProfile) return;
+    const link = window.location.origin + window.location.pathname + '?ref=' + myProfile.referral_code;
+    const text = `🚀 J'utilise SIKHANE-TECH pour configurer mes Mikrotik en 3 minutes (hotspot, Mikhmon, anti-partage TTL).\n\nInscris-toi avec mon code de parrainage : *${myProfile.referral_code}*\n\n${link}`;
+    const url = 'https://wa.me/?text=' + encodeURIComponent(text);
+    window.open(url, '_blank');
+  }
+
+  // Auto-remplir code de parrainage depuis URL ?ref=XXX
+  (function autofillRefFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) {
+      const refInput = document.getElementById('authRefCode');
+      if (refInput) {
+        refInput.value = ref.toUpperCase();
+        // Bascule automatiquement en mode inscription
+        setTimeout(() => {
+          if (typeof authTab === 'function') authTab('signup');
+          // Aller direct sur l'auth screen depuis la landing
+          const landing = document.getElementById('landingPage');
+          const auth = document.getElementById('authScreen');
+          if (landing && !landing.classList.contains('hidden')) {
+            landing.classList.add('hidden');
+            auth.classList.remove('hidden');
+          }
+        }, 100);
+      }
+    }
+  })();
 </script>
 </body>
 </html>
