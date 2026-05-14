@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   :root {
@@ -440,6 +441,44 @@
   .hero-banner h2 em { font-style: italic; font-weight: 400; color: var(--yellow); }
   .hero-banner p { color: var(--ink-dim); font-size: 13px; line-height: 1.5; margin-top: 10px; max-width: 480px; }
 
+  /* ===== CAPTIVE PAGE ===== */
+  .captive-layout { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
+  @media (max-width: 900px) { .captive-layout { grid-template-columns: 1fr; } }
+
+  .template-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .template-card { background: var(--bg); border: 2px solid var(--line-2); border-radius: 2px; padding: 12px 8px; cursor: pointer; text-align: center; transition: 0.2s; }
+  .template-card:hover { border-color: var(--green-dim); }
+  .template-card[data-selected="true"] { border-color: var(--green); background: rgba(70,217,124,0.05); }
+  .template-card[data-selected="true"]::after { content: '✓'; display: block; color: var(--green); margin-top: 4px; font-weight: 800; }
+  .template-preview { height: 80px; border-radius: 2px; margin-bottom: 8px; display: grid; place-items: center; font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .template-preview.epure { background: linear-gradient(180deg, #fafafa, #f0f0f0); color: #333; border: 1px solid #ddd; }
+  .template-preview.moderne { background: linear-gradient(180deg, #0a0e0c, #131815); color: #46d97c; border: 1px solid #2a332d; }
+  .template-preview.classique { background: linear-gradient(180deg, #1e3a8a, #1e40af); color: #fff; border: 1px solid #1e3a8a; }
+  .template-name { font-family: var(--serif); font-size: 13px; font-weight: 600; }
+
+  .color-pickers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .color-row { display: flex; align-items: center; gap: 10px; }
+  .color-swatch { width: 44px; height: 44px; border: 1px solid var(--line-2); border-radius: 2px; cursor: pointer; position: relative; overflow: hidden; flex-shrink: 0; }
+  .color-swatch input[type="color"] { position: absolute; inset: -4px; width: calc(100% + 8px); height: calc(100% + 8px); border: none; padding: 0; cursor: pointer; background: transparent; }
+  .color-hex { flex: 1; font-family: var(--mono); text-transform: uppercase; }
+
+  .logo-upload { background: var(--bg); border: 2px dashed var(--line-2); padding: 24px; border-radius: 2px; text-align: center; cursor: pointer; transition: 0.2s; }
+  .logo-upload:hover { border-color: var(--green); background: rgba(70,217,124,0.03); }
+  .logo-upload.has-logo { border-color: var(--green); padding: 14px; background: rgba(70,217,124,0.03); }
+  .logo-upload img { max-width: 80px; max-height: 80px; border-radius: 2px; display: block; margin: 0 auto 8px; }
+  .logo-upload .lu-text { font-family: var(--mono); font-size: 11px; color: var(--ink-dim); }
+  .logo-upload .lu-sub { font-family: var(--mono); font-size: 9px; color: var(--ink-faint); margin-top: 4px; letter-spacing: 0.1em; }
+
+  .phone-frame { position: sticky; top: 20px; background: #1a1a1a; border-radius: 32px; padding: 14px 10px 18px; box-shadow: 0 8px 32px rgba(0,0,0,0.5), inset 0 0 0 2px #2a2a2a; }
+  .phone-frame::before { content: ''; display: block; width: 60px; height: 5px; background: #000; border-radius: 4px; margin: 0 auto 12px; }
+  .phone-screen { background: #fff; border-radius: 18px; overflow: hidden; aspect-ratio: 9 / 19.5; max-height: 580px; }
+  .phone-screen iframe { width: 100%; height: 100%; border: none; display: block; }
+  .phone-status { font-family: var(--mono); font-size: 9px; color: var(--ink-dim); text-align: center; letter-spacing: 0.15em; text-transform: uppercase; margin-top: 12px; }
+
+  @media (max-width: 900px) {
+    .phone-frame { position: static; max-width: 320px; margin: 0 auto; }
+  }
+
   /* MISC */
   .flag-sn { display: inline-block; width: 14px; height: 9px; background: linear-gradient(90deg, #00853f 33%, #fdef42 33% 66%, #e31b23 66%); vertical-align: middle; }
 </style>
@@ -693,6 +732,10 @@
       <div class="sb-link" data-page="mikhmon" onclick="navTo('mikhmon')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11H3v10h6V11z"/><path d="M21 3h-6v18h6V3z"/><path d="M15 7H9v14h6V7z"/></svg>
         Mikhmon
+      </div>
+      <div class="sb-link" data-page="captive" onclick="navTo('captive')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        Page Captive
       </div>
 
       <div class="sb-section">Compte</div>
@@ -1002,8 +1045,134 @@
       </div>
     </div>
 
+    <!-- ========== PAGE: CAPTIVE ========== -->
+    <div class="page" id="page-captive">
+      <div class="page-head">
+        <div class="page-eyebrow">Personnalisation</div>
+        <h1 class="page-title">Page <em>captive</em> sur-mesure</h1>
+        <p class="page-lede">Personnalise la page de connexion WiFi que verront tes clients. Logo, couleurs, textes — tu télécharges un pack ZIP prêt à uploader dans <code>/hotspot/</code> de ta borne via Winbox.</p>
+      </div>
+
+      <div class="captive-layout">
+
+        <!-- COLONNE GAUCHE : FORMULAIRE -->
+        <div>
+
+          <!-- Templates -->
+          <section class="card">
+            <div class="card-head">
+              <div class="card-num">ÉTAPE 01</div>
+              <div class="card-title">Choisis ton style</div>
+              <div class="card-desc">3 templates de design adaptés au marché sénégalais.</div>
+            </div>
+            <div class="card-body">
+              <div class="template-grid">
+                <div class="template-card" data-tpl="epure" data-selected="true" onclick="selectTemplate('epure')">
+                  <div class="template-preview epure">Aa</div>
+                  <div class="template-name">Épuré</div>
+                </div>
+                <div class="template-card" data-tpl="moderne" onclick="selectTemplate('moderne')">
+                  <div class="template-preview moderne">Aa</div>
+                  <div class="template-name">Moderne</div>
+                </div>
+                <div class="template-card" data-tpl="classique" onclick="selectTemplate('classique')">
+                  <div class="template-preview classique">Aa</div>
+                  <div class="template-name">Classique</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Identité -->
+          <section class="card">
+            <div class="card-head">
+              <div class="card-num">ÉTAPE 02</div>
+              <div class="card-title">Identité visuelle</div>
+              <div class="card-desc">Logo + couleurs de ta marque.</div>
+            </div>
+            <div class="card-body">
+              <div class="field">
+                <label>Logo <span class="hint">PNG ou JPG, idéalement carré</span></label>
+                <div class="logo-upload" id="logoDrop" onclick="document.getElementById('logoFile').click()">
+                  <div id="logoPlaceholder">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--ink-faint);margin-bottom:8px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <div class="lu-text">Clique pour uploader ton logo</div>
+                    <div class="lu-sub">Optionnel · Recommandé 200×200 px</div>
+                  </div>
+                </div>
+                <input type="file" id="logoFile" accept="image/*" style="display:none;" onchange="handleLogoFile(this)" />
+              </div>
+
+              <div class="color-pickers">
+                <div class="field">
+                  <label>Couleur primaire</label>
+                  <div class="color-row">
+                    <div class="color-swatch" style="background:#46d97c;" id="cp1Swatch">
+                      <input type="color" id="cpPrimary" value="#46d97c" onchange="updateCaptivePreview()" oninput="document.getElementById('cp1Swatch').style.background=this.value;document.getElementById('cpPrimaryHex').value=this.value.toUpperCase();updateCaptivePreview();" />
+                    </div>
+                    <input type="text" id="cpPrimaryHex" value="#46D97C" onchange="syncColorFromHex('Primary')" class="color-hex" />
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Couleur secondaire</label>
+                  <div class="color-row">
+                    <div class="color-swatch" style="background:#0a0e0c;" id="cp2Swatch">
+                      <input type="color" id="cpSecondary" value="#0a0e0c" onchange="updateCaptivePreview()" oninput="document.getElementById('cp2Swatch').style.background=this.value;document.getElementById('cpSecondaryHex').value=this.value.toUpperCase();updateCaptivePreview();" />
+                    </div>
+                    <input type="text" id="cpSecondaryHex" value="#0A0E0C" onchange="syncColorFromHex('Secondary')" class="color-hex" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Textes -->
+          <section class="card">
+            <div class="card-head">
+              <div class="card-num">ÉTAPE 03</div>
+              <div class="card-title">Textes affichés</div>
+              <div class="card-desc">Le titre et le slogan que verra ton client.</div>
+            </div>
+            <div class="card-body">
+              <div class="field">
+                <label>Nom de ton WiFi Zone <span class="req">*</span></label>
+                <input type="text" id="captTitle" placeholder="ex: Mermoz Digital Zone" oninput="updateCaptivePreview()" value="Mon WiFi Zone" />
+              </div>
+              <div class="field">
+                <label>Slogan / sous-titre</label>
+                <input type="text" id="captSlogan" placeholder="ex: Le WiFi le plus rapide de Dakar" oninput="updateCaptivePreview()" value="Bienvenue sur le réseau" />
+              </div>
+              <div class="field">
+                <label>Nom du gérant <span class="hint">affiché en bas</span></label>
+                <input type="text" id="captOwner" placeholder="ex: Boutique Chez Modou" oninput="updateCaptivePreview()" value="" />
+              </div>
+              <div class="field">
+                <label>Message d'accueil</label>
+                <textarea id="captMessage" rows="2" placeholder="ex: Pour vous connecter, entrez votre code reçu" oninput="updateCaptivePreview()" style="font-family:var(--mono);font-size:12px;resize:vertical;">Entrez votre code pour vous connecter à internet.</textarea>
+              </div>
+            </div>
+          </section>
+
+          <div class="generate-wrap">
+            <button class="btn-primary" onclick="generateCaptive()">Générer ma page captive →</button>
+          </div>
+
+        </div>
+
+        <!-- COLONNE DROITE : APERÇU SMARTPHONE -->
+        <div>
+          <div class="phone-frame">
+            <div class="phone-screen">
+              <iframe id="captivePreview" srcdoc=""></iframe>
+            </div>
+          </div>
+          <div class="phone-status">Aperçu sur mobile</div>
+        </div>
+
+      </div>
+    </div>
+
     <!-- ========== PAGE: HISTORY ========== -->
-    <div class="page" id="page-history">
     <div class="page" id="page-history">
       <div class="page-head">
         <div class="page-eyebrow">Vos configurations</div>
@@ -1195,8 +1364,8 @@
   const SUPABASE_KEY = 'sb_publishable_VNYuFFbE-pUGAJKV5pLZRQ_SPB8S9v-';
 
   const PAYMENT_NUMBERS = {
-    wave: '+221 77 793 90 90',
-    om:   '+221 77 793 90 90',
+    wave: '+221 78 793 90 90',
+    om:   '+221 78 793 90 90',
     free: '+221 76 541 62 98'
   };
   const PAYMENT_AMOUNT = 10000; // FCFA
@@ -1304,12 +1473,13 @@
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + page).classList.add('active');
     document.querySelectorAll('.sb-link').forEach(l => l.classList.toggle('active', l.dataset.page === page));
-    const titles = { dashboard:'Dashboard', atelier:'Atelier', routers:'Mes Routeurs', mikhmon:'Mikhmon', history:'Historique', profile:'Profil', admin:'Admin' };
+    const titles = { dashboard:'Dashboard', atelier:'Atelier', routers:'Mes Routeurs', mikhmon:'Mikhmon', captive:'Page Captive', history:'Historique', profile:'Profil', admin:'Admin' };
     document.getElementById('mobileTitle').textContent = titles[page] || '';
     closeSidebar();
     if (page === 'dashboard') loadDashboard();
     if (page === 'routers') loadRouters();
     if (page === 'mikhmon') loadMikhmonChips();
+    if (page === 'captive') updateCaptivePreview();
     if (page === 'history') loadHistory();
     if (page === 'admin') loadAdminPayments();
     window.scrollTo(0, 0);
@@ -1559,7 +1729,27 @@
     try {
       let payload;
 
-      if (pendingAuditPayment && pendingAuditContent) {
+      if (pendingCaptivePayment && pendingCaptiveData) {
+        // === PAIEMENT PAGE CAPTIVE 3000 FCFA ===
+        payload = {
+          user_id: currentUser.id, user_email: currentUser.email,
+          amount: 3000, payment_method: selectedMethod, payer_phone: phone,
+          status: 'pending', payment_type: 'captive',
+          site_name: 'Page Captive — ' + pendingCaptiveData.title,
+          site_id: new Date().toISOString().split('T')[0],
+          rsc_content: 'captive',
+          config_data: {
+            template: pendingCaptiveData.template,
+            primary: pendingCaptiveData.primary,
+            secondary: pendingCaptiveData.secondary,
+            title: pendingCaptiveData.title,
+            slogan: pendingCaptiveData.slogan,
+            owner: pendingCaptiveData.owner,
+            message: pendingCaptiveData.message,
+            has_logo: !!pendingCaptiveData.logo
+          }
+        };
+      } else if (pendingAuditPayment && pendingAuditContent) {
         // === PAIEMENT AUDIT 3000 FCFA ===
         payload = {
           user_id: currentUser.id, user_email: currentUser.email,
@@ -1594,6 +1784,8 @@
       pendingConfigData = null;
       pendingAuditContent = null;
       pendingAuditPayment = false;
+      pendingCaptivePayment = false;
+      // Garder pendingCaptiveData pour le téléchargement après validation admin
     } catch (e) { alert('Erreur : ' + e.message); btn.disabled=false; btn.textContent="J'ai payé · soumettre ma demande →"; }
   }
 
@@ -1773,6 +1965,8 @@
       const methodLabel = { wave:'Wave', om:'Orange Money', free:'Free Money' }[p.payment_method] || p.payment_method;
       const typeLabel = p.payment_type === 'audit'
         ? '<span class="badge-status" style="background:rgba(74,158,255,0.12);color:var(--blue);border:1px solid rgba(74,158,255,0.3);margin-left:6px;">🔍 Audit IA</span>'
+        : p.payment_type === 'captive'
+        ? '<span class="badge-status" style="background:rgba(167,90,230,0.12);color:#a75ae6;border:1px solid rgba(167,90,230,0.3);margin-left:6px;">📱 Page captive</span>'
         : '<span class="badge-status" style="background:rgba(70,217,124,0.05);color:var(--green-dim);border:1px solid var(--green-dim);margin-left:6px;">⚙ Config</span>';
       const statusBadge = {
         pending:'<span class="badge-status badge-pending">⏳ En attente</span>',
@@ -1801,14 +1995,14 @@
     const { data: pay, error: getErr } = await supa.from('payments').select('*').eq('id', id).single();
     if (getErr) { alert(getErr.message); return; }
 
-    // Si c'est un audit, on ne crée pas de config
-    if (pay.payment_type === 'audit') {
-      // Juste marquer comme validé — le client pourra refaire l'audit gratuitement
+    // Si c'est un audit OU une captive, on ne crée pas de config
+    if (pay.payment_type === 'audit' || pay.payment_type === 'captive') {
       const { error: updErr } = await supa.from('payments').update({
         status:'validated', validated_by: currentUser.id, validated_at: new Date().toISOString()
       }).eq('id', id);
       if (updErr) { alert(updErr.message); return; }
-      alert('✓ Paiement audit validé. Le client peut maintenant relancer son audit.');
+      const serviceLabel = pay.payment_type === 'audit' ? 'audit' : 'page captive';
+      alert(`✓ Paiement ${serviceLabel} validé. Le client peut maintenant accéder au service.`);
       await loadAdminPayments();
       return;
     }
@@ -2095,6 +2289,325 @@
 
   function openMikhmonExternal() {
     window.open('https://laksa19.github.io/', '_blank');
+  }
+
+  // ============================================================
+  // PAGE CAPTIVE
+  // ============================================================
+  var captiveTemplate = 'epure';
+  var captiveLogoDataUrl = null;
+  var pendingCaptiveData = null;
+  var pendingCaptivePayment = false;
+
+  function selectTemplate(tpl) {
+    captiveTemplate = tpl;
+    document.querySelectorAll('.template-card').forEach(c => c.dataset.selected = c.dataset.tpl === tpl ? 'true' : 'false');
+    updateCaptivePreview();
+  }
+
+  function handleLogoFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { alert('Choisis un fichier image (PNG, JPG, SVG).'); return; }
+    if (file.size > 500 * 1024) { alert('Logo trop lourd (max 500 Ko). Compresse-le avec tinypng.com'); return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      captiveLogoDataUrl = e.target.result;
+      const wrap = document.getElementById('logoDrop');
+      wrap.classList.add('has-logo');
+      document.getElementById('logoPlaceholder').innerHTML = `
+        <img src="${captiveLogoDataUrl}" alt="logo" />
+        <div class="lu-text" style="color:var(--green);">✓ Logo chargé</div>
+        <div class="lu-sub">Clique pour changer</div>
+      `;
+      updateCaptivePreview();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function syncColorFromHex(which) {
+    const hexInput = document.getElementById('cp' + which + 'Hex');
+    const picker = document.getElementById('cp' + which);
+    let v = hexInput.value.trim();
+    if (!v.startsWith('#')) v = '#' + v;
+    if (!/^#[0-9A-Fa-f]{6}$/.test(v)) { hexInput.value = picker.value.toUpperCase(); return; }
+    picker.value = v;
+    document.getElementById(which === 'Primary' ? 'cp1Swatch' : 'cp2Swatch').style.background = v;
+    hexInput.value = v.toUpperCase();
+    updateCaptivePreview();
+  }
+
+  function getCaptiveValues() {
+    return {
+      template: captiveTemplate,
+      primary: document.getElementById('cpPrimary').value,
+      secondary: document.getElementById('cpSecondary').value,
+      title: document.getElementById('captTitle').value || 'WiFi Zone',
+      slogan: document.getElementById('captSlogan').value || '',
+      owner: document.getElementById('captOwner').value || '',
+      message: document.getElementById('captMessage').value || 'Entrez votre code',
+      logo: captiveLogoDataUrl
+    };
+  }
+
+  function buildCaptiveHTML(v, isPreview) {
+    const logoHtml = v.logo
+      ? `<img src="${v.logo}" alt="logo" class="logo" />`
+      : `<div class="logo-default">📡</div>`;
+
+    let styles = '';
+    let bodyClass = '';
+
+    if (v.template === 'epure') {
+      bodyClass = 'tpl-epure';
+      styles = `
+        body { background: #fafafa; color: #222; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        .wrap { background: #fff; }
+        .title { color: ${v.secondary}; }
+        .slogan { color: #666; }
+        .btn-login { background: ${v.primary}; color: #fff; }
+        .btn-login:hover { background: ${v.primary}; filter: brightness(1.08); }
+        input { border-color: #e0e0e0; }
+        input:focus { border-color: ${v.primary}; }
+        .owner { color: #999; }
+        .logo-default { background: ${v.primary}; }
+      `;
+    } else if (v.template === 'moderne') {
+      bodyClass = 'tpl-moderne';
+      styles = `
+        body { background: #0a0e0c; color: #e6efe8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        .wrap { background: linear-gradient(180deg, #131815, #0f1411); border: 1px solid #1f2622; }
+        .wrap::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: ${v.primary}; }
+        .title { color: ${v.primary}; }
+        .slogan { color: #8a9690; }
+        .btn-login { background: ${v.primary}; color: ${v.secondary}; }
+        .btn-login:hover { filter: brightness(1.1); }
+        input { background: #0a0e0c; border-color: #2a332d; color: #e6efe8; }
+        input::placeholder { color: #4a544f; }
+        input:focus { border-color: ${v.primary}; }
+        .owner { color: #4a544f; }
+        .logo-default { background: rgba(70,217,124,0.15); color: ${v.primary}; border: 1px solid ${v.primary}; }
+      `;
+    } else { // classique
+      bodyClass = 'tpl-classique';
+      styles = `
+        body { background: linear-gradient(180deg, ${v.secondary}, ${shadeColor(v.secondary, -15)}); color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+        .wrap { background: rgba(255,255,255,0.97); color: #222; box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        .title { color: ${v.secondary}; font-weight: 800; }
+        .slogan { color: ${v.primary}; font-weight: 600; }
+        .btn-login { background: linear-gradient(135deg, ${v.primary}, ${shadeColor(v.primary, -10)}); color: #fff; box-shadow: 0 4px 12px ${v.primary}55; }
+        .btn-login:hover { transform: translateY(-1px); box-shadow: 0 6px 16px ${v.primary}88; }
+        input { border-color: #e0e0e0; }
+        input:focus { border-color: ${v.primary}; }
+        .owner { color: #999; }
+        .logo-default { background: linear-gradient(135deg, ${v.primary}, ${v.secondary}); color: #fff; }
+      `;
+    }
+
+    const html = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>$(if-error chap-id "Login" "$(login-by)")</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.wrap { width: 100%; max-width: 380px; padding: 36px 28px; border-radius: 4px; position: relative; }
+.logo { display: block; max-width: 90px; max-height: 90px; margin: 0 auto 20px; border-radius: 8px; }
+.logo-default { display: grid; place-items: center; width: 72px; height: 72px; margin: 0 auto 20px; border-radius: 50%; font-size: 32px; }
+.title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 6px; line-height: 1.2; }
+.slogan { font-size: 13px; text-align: center; margin-bottom: 24px; }
+.message { font-size: 13px; text-align: center; margin-bottom: 24px; line-height: 1.5; }
+form { display: block; }
+.field { margin-bottom: 14px; }
+label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; opacity: 0.7; }
+input { width: 100%; padding: 14px; font-size: 16px; border: 1px solid; border-radius: 3px; outline: none; background: transparent; transition: 0.2s; -webkit-appearance: none; }
+.btn-login { width: 100%; padding: 14px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; border: none; border-radius: 3px; cursor: pointer; transition: 0.2s; margin-top: 6px; }
+.error { background: rgba(232,83,63,0.12); color: #e8533f; padding: 10px; border-radius: 3px; font-size: 12px; text-align: center; margin-bottom: 14px; display: $(if-error chap-id "block" "none"); }
+.owner { text-align: center; font-size: 10px; margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(0,0,0,0.06); letter-spacing: 0.1em; text-transform: uppercase; }
+.brand { text-align: center; font-size: 9px; opacity: 0.5; margin-top: 16px; letter-spacing: 0.15em; text-transform: uppercase; }
+${styles}
+</style>
+</head>
+<body class="${bodyClass}">
+<div class="wrap">
+  ${logoHtml}
+  <div class="title">${escapeAttr(v.title)}</div>
+  ${v.slogan ? `<div class="slogan">${escapeAttr(v.slogan)}</div>` : ''}
+  <div class="message">${escapeAttr(v.message)}</div>
+  <div class="error">$(error)</div>
+  <form name="login" action="$(link-login-only)" method="post" $(if chap-id 'onSubmit="return doLogin()"' '') >
+    <input type="hidden" name="dst" value="$(link-orig)" />
+    <input type="hidden" name="popup" value="true" />
+    <div class="field">
+      <label>Code d'accès</label>
+      <input type="text" name="username" placeholder="Votre code" autocomplete="off" autofocus />
+    </div>
+    <div class="field">
+      <label>Mot de passe <span style="opacity:0.5;">(optionnel)</span></label>
+      <input type="password" name="password" placeholder="••••" autocomplete="off" />
+    </div>
+    <input type="hidden" name="password" />
+    <button class="btn-login" type="submit">Se connecter</button>
+  </form>
+  ${v.owner ? `<div class="owner">${escapeAttr(v.owner)}</div>` : ''}
+  <div class="brand">⚡ Propulsé par SIKHANE-TECH</div>
+</div>
+$(if chap-id)
+<` + `script type="text/javascript" src="/md5.js"><` + `/script>
+<` + `script type="text/javascript">
+function doLogin() {
+  document.login.password.value = hexMD5('$(chap-id)' + document.login.password.value + '$(chap-challenge)');
+  return true;
+}
+<` + `/script>
+$(endif)
+</body>
+</html>`;
+
+    return html;
+  }
+
+  function escapeAttr(s) { return String(s||'').replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function shadeColor(color, percent) {
+    const f = parseInt(color.slice(1),16), t = percent<0?0:255, p = percent<0?percent*-1:percent;
+    const R = f>>16, G = f>>8&0x00FF, B = f&0x0000FF;
+    return "#"+(0x1000000+(Math.round((t-R)*p/100)+R)*0x10000+(Math.round((t-G)*p/100)+G)*0x100+(Math.round((t-B)*p/100)+B)).toString(16).slice(1);
+  }
+
+  function updateCaptivePreview() {
+    const v = getCaptiveValues();
+    // Pour la preview, on remplace les variables Mikrotik par des valeurs visibles
+    let html = buildCaptiveHTML(v, true);
+    html = html.replace(/\$\(if-error chap-id "([^"]*)" "([^"]*)"\)/g, '$2');
+    html = html.replace(/\$\(error\)/g, '');
+    html = html.replace(/\$\(link-login-only\)/g, '#');
+    html = html.replace(/\$\(link-orig\)/g, '');
+    html = html.replace(/\$\(if chap-id[^)]*\)[^$]*\$\(endif\)/g, '');
+    html = html.replace(/\$\(if chap-id '([^']*)' '([^']*)'\) /g, '$2 ');
+    const iframe = document.getElementById('captivePreview');
+    if (iframe) iframe.srcdoc = html;
+  }
+
+  async function generateCaptive() {
+    const title = document.getElementById('captTitle').value.trim();
+    if (!title) { alert('Le nom de ton WiFi Zone est requis.'); return; }
+    if (!currentUser) { alert('Connecte-toi d\'abord.'); return; }
+
+    pendingCaptiveData = getCaptiveValues();
+
+    // Vérifier le quota gratuit
+    const { data: freeCount } = await supa.rpc('free_captives_used_this_month', { uid: currentUser.id });
+    const isFree = (freeCount || 0) === 0;
+
+    if (isFree) {
+      // Gratuit : générer direct
+      await supa.from('payments').insert({
+        user_id: currentUser.id, user_email: currentUser.email,
+        amount: 0, payment_method: 'free', payer_phone: 'captive-gratuit-mensuel',
+        status: 'free', payment_type: 'captive',
+        site_name: 'Page Captive — ' + title, site_id: new Date().toISOString().split('T')[0],
+        rsc_content: 'captive_html'
+      });
+      downloadCaptiveZip(pendingCaptiveData);
+      setTimeout(() => alert('🎁 Page captive gratuite mensuelle utilisée ! Pack téléchargé.'), 200);
+      pendingCaptiveData = null;
+    } else {
+      // Payant : 3000 FCFA
+      pendingCaptivePayment = true;
+      document.getElementById('paymentStep1').style.display = 'block';
+      document.getElementById('paymentStep2').style.display = 'none';
+      document.getElementById('payerPhone').value = '';
+      document.querySelector('#paymentModal .pay-price').innerHTML = '3 000 <span style="font-size:18px;color:var(--ink-dim);">FCFA</span>';
+      document.querySelector('#paymentModal .pay-price-sub').textContent = 'Page captive personnalisée';
+      document.querySelector('#paymentModal .pay-step:nth-child(1) .pay-step-txt').innerHTML = 'Envoie <strong>3 000 FCFA</strong> au numéro ci-dessus via ton appli';
+      document.getElementById('paymentModal').classList.add('open');
+    }
+  }
+
+  async function downloadCaptiveZip(v) {
+    if (typeof JSZip === 'undefined') {
+      alert('Erreur : librairie ZIP non chargée. Vérifie ta connexion internet.');
+      return;
+    }
+    const zip = new JSZip();
+    const html = buildCaptiveHTML(v, false);
+
+    zip.file('login.html', html);
+
+    // Alogin.html (page après login réussi - redirige)
+    zip.file('alogin.html', `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=$(link-redirect)"></head>
+<body><` + `script>location.href="$(link-redirect)";<` + `/script></body></html>`);
+
+    // Rlogin.html (redirection)
+    zip.file('rlogin.html', `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta http-equiv="refresh" content="0;url=$(link-login)"></head>
+<body></body></html>`);
+
+    // Errors (messages d'erreur en français)
+    zip.file('errors.txt', `# Messages d'erreur SIKHANE-TECH - Français
+Invalid username or password = Code incorrect
+User ... is not allowed to log in from this MAC address = Cet appareil n'est pas autorisé
+session timeout = Votre session a expiré
+idle timeout reached = Inactivité trop longue
+uptime limit reached = Temps de connexion écoulé
+ipv4 limit reached = Trop d'appareils connectés
+Internal error = Erreur interne, veuillez réessayer
+Trial: simultaneous login limit reached = Limite de connexions simultanées atteinte`);
+
+    // Logo (si uploadé)
+    if (v.logo && v.logo.startsWith('data:image/')) {
+      const matches = v.logo.match(/^data:image\/([a-z]+);base64,(.+)$/);
+      if (matches) {
+        const ext = matches[1] === 'jpeg' ? 'jpg' : matches[1];
+        zip.file('logo.' + ext, matches[2], { base64: true });
+      }
+    }
+
+    // README pour le client
+    zip.file('LISEZ-MOI.txt', `============================================================
+PAGE CAPTIVE SIKHANE-TECH
+${v.title}
+Générée le ${new Date().toLocaleString('fr-FR')}
+============================================================
+
+CONTENU DU PACK :
+- login.html      → Page de connexion (à uploader dans /hotspot/)
+- alogin.html     → Page après login réussi
+- rlogin.html     → Redirection
+- errors.txt      → Messages d'erreur en français
+${v.logo ? '- logo.png/jpg    → Votre logo' : ''}
+
+INSTRUCTIONS D'INSTALLATION :
+
+1. Ouvre Winbox et connecte-toi à ta borne Mikrotik
+2. Va dans "Files" (menu de gauche)
+3. Trouve le dossier "hotspot" (s'il existe déjà)
+   Si non, lance d'abord la config hotspot SIKHANE-TECH
+4. SAUVEGARDE l'ancien login.html (clic droit → Backup)
+5. Glisse-dépose tous les fichiers de ce pack dans /hotspot/
+6. Confirme le remplacement
+7. Teste : déconnecte un téléphone et reconnecte-toi au WiFi
+
+ASTUCE :
+Si tu veux modifier les couleurs ou textes plus tard,
+retourne sur SIKHANE-TECH → Page Captive → Génère une
+nouvelle version.
+
+============================================================
+SIKHANE-TECH · sikhane-tech.com
+============================================================`);
+
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sikhane-captive-${(v.title||'wifi').toLowerCase().replace(/[^a-z0-9]/g,'-')}.zip`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 </script>
 </body>
