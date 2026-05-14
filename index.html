@@ -690,6 +690,10 @@
         Mes Routeurs
         <span class="badge-num" id="navRoutersCount" style="display:none;">0</span>
       </div>
+      <div class="sb-link" data-page="mikhmon" onclick="navTo('mikhmon')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11H3v10h6V11z"/><path d="M21 3h-6v18h6V3z"/><path d="M15 7H9v14h6V7z"/></svg>
+        Mikhmon
+      </div>
 
       <div class="sb-section">Compte</div>
       <div class="sb-link" data-page="history" onclick="navTo('history')">
@@ -950,7 +954,56 @@
       <div id="routersList"></div>
     </div>
 
+    <!-- ========== PAGE: MIKHMON ========== -->
+    <div class="page" id="page-mikhmon">
+      <div class="page-head">
+        <div class="page-eyebrow">Gestion des tickets</div>
+        <h1 class="page-title"><em>Mikhmon</em> intégré</h1>
+        <p class="page-lede">Génère et vends tes tickets WiFi directement depuis SIKHANE-TECH. Mikhmon se connecte à ta borne Mikrotik via son IP locale pour créer/imprimer/vendre les tickets selon les profils que tu as configurés.</p>
+      </div>
+
+      <div style="background:var(--panel-2);border:1px solid var(--line);padding:14px;border-radius:2px;margin-bottom:16px;display:flex;gap:12px;align-items:flex-start;">
+        <div style="width:32px;height:32px;min-width:32px;background:rgba(245,197,66,0.12);border:1px solid rgba(245,197,66,0.3);border-radius:50%;display:grid;place-items:center;font-weight:800;color:var(--yellow);">!</div>
+        <div style="flex:1;">
+          <div style="font-weight:600;font-size:14px;margin-bottom:4px;">Important pour utiliser Mikhmon</div>
+          <div style="font-size:12px;color:var(--ink-dim);line-height:1.55;">
+            Mikhmon doit pouvoir <strong>joindre ta borne Mikrotik</strong>. Trois cas possibles :<br>
+            ① Tu es sur le <strong>même WiFi</strong> que ta borne (cas le plus courant)<br>
+            ② Tu as un <strong>VPN</strong> qui te connecte au réseau de la borne<br>
+            ③ La borne a une <strong>IP publique</strong> avec port 8728 ouvert (rare et déconseillé)<br>
+            <br>Sur ta borne, active l'API : <code style="background:var(--bg);padding:2px 6px;border-radius:2px;color:var(--green);">/ip service enable api</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sélecteur rapide de routeur -->
+      <div id="routerQuickSelect" style="background:var(--panel);border:1px solid var(--line);padding:14px;border-radius:2px;margin-bottom:14px;display:none;">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--ink-dim);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;">Tes routeurs enregistrés</div>
+        <div id="routerChips" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+      </div>
+
+      <!-- Iframe Mikhmon -->
+      <div style="background:#000;border:1px solid var(--line);border-radius:2px;overflow:hidden;position:relative;">
+        <div style="background:var(--bg-2);padding:8px 14px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:10px;color:var(--ink-dim);display:flex;justify-content:space-between;align-items:center;">
+          <span>🔗 mikhmon.com (intégré dans SIKHANE-TECH)</span>
+          <button class="btn-sec" style="padding:4px 10px;font-size:9px;" onclick="openMikhmonExternal()">Ouvrir en plein écran ↗</button>
+        </div>
+        <iframe id="mikhmonFrame" src="https://laksa19.github.io/" style="width:100%;height:800px;border:none;display:block;"></iframe>
+      </div>
+
+      <div style="margin-top:16px;background:var(--panel);border:1px solid var(--line);padding:14px;border-radius:2px;">
+        <div style="font-weight:600;font-size:13px;margin-bottom:8px;">💡 Astuces Mikhmon</div>
+        <div style="font-size:12px;color:var(--ink-dim);line-height:1.6;">
+          • <strong>Login</strong> : entre l'IP de ta borne (ex: 192.168.88.1), user <code style="color:var(--green);">admin</code> et ton mot de passe<br>
+          • <strong>Génération de tickets</strong> : Onglet "Add user" → choisis le profil (PROFIL_2H, PROFIL_24H...) → "Add Multi" pour créer plusieurs tickets d'un coup<br>
+          • <strong>Impression</strong> : Onglet "Generate" → coche les tickets → "Print" pour avoir des tickets formatés à découper<br>
+          • <strong>Rapports</strong> : Onglet "Report" → voir tes ventes par jour/mois
+        </div>
+      </div>
+    </div>
+
     <!-- ========== PAGE: HISTORY ========== -->
+    <div class="page" id="page-history">
     <div class="page" id="page-history">
       <div class="page-head">
         <div class="page-eyebrow">Vos configurations</div>
@@ -1138,13 +1191,13 @@
   // ============================================================
   // CONFIGURATION — REMPLACE LES VALEURS CI-DESSOUS
   // ============================================================
-  const SUPABASE_URL = 'https://lxicwateowopllzyabsg.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_VNYuFFbE-pUGAJKV5pLZRQ_SPB8S9v-';
+  const SUPABASE_URL = 'VOTRE_URL_ICI';
+  const SUPABASE_KEY = 'VOTRE_CLE_ICI';
 
   const PAYMENT_NUMBERS = {
-    wave: '+221 78 793 90 90',
-    om:   '+221 78 793 90 90',
-    free: '+221 76 541 62 98'
+    wave: '77 000 00 00',
+    om:   '77 000 00 00',
+    free: '76 000 00 00'
   };
   const PAYMENT_AMOUNT = 10000; // FCFA
   // ============================================================
@@ -1153,6 +1206,8 @@
   var currentUser = null;
   var isAdmin = false;
   var pendingConfigData = null;
+  var pendingAuditContent = null;
+  var pendingAuditPayment = false;
   var currentPage = 'dashboard';
   var authMode = 'login';
 
@@ -1249,11 +1304,12 @@
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + page).classList.add('active');
     document.querySelectorAll('.sb-link').forEach(l => l.classList.toggle('active', l.dataset.page === page));
-    const titles = { dashboard:'Dashboard', atelier:'Atelier', routers:'Mes Routeurs', history:'Historique', profile:'Profil', admin:'Admin' };
+    const titles = { dashboard:'Dashboard', atelier:'Atelier', routers:'Mes Routeurs', mikhmon:'Mikhmon', history:'Historique', profile:'Profil', admin:'Admin' };
     document.getElementById('mobileTitle').textContent = titles[page] || '';
     closeSidebar();
     if (page === 'dashboard') loadDashboard();
     if (page === 'routers') loadRouters();
+    if (page === 'mikhmon') loadMikhmonChips();
     if (page === 'history') loadHistory();
     if (page === 'admin') loadAdminPayments();
     window.scrollTo(0, 0);
@@ -1492,26 +1548,63 @@
     selectedMethod = m;
     document.querySelectorAll('.pay-method-card').forEach(c => c.dataset.selected = c.dataset.method === m ? 'true' : 'false');
   }
-  function closePayment() { document.getElementById('paymentModal').classList.remove('open'); }
+  // gestion paiement
   async function confirmPayment() {
     const phone = document.getElementById('payerPhone').value.trim();
     if (!phone) { alert('Entre ton numéro de téléphone qui a payé.'); return; }
-    if (!pendingConfigData) { alert('Erreur : aucune configuration en attente.'); return; }
+
     const btn = document.getElementById('payConfirmBtn');
     btn.disabled = true; btn.textContent = 'Envoi...';
+
     try {
-      const { error } = await supa.from('payments').insert({
-        user_id: currentUser.id, user_email: currentUser.email,
-        amount: PAYMENT_AMOUNT, payment_method: selectedMethod, payer_phone: phone,
-        status: 'pending', site_name: pendingConfigData.siteName, site_id: pendingConfigData.siteId,
-        rsc_content: pendingConfigData.rscContent,
-        config_data: { ssid: pendingConfigData.ssid, network_cidr: pendingConfigData.netCidr, profiles_count: pendingConfigData.profilesCount }
-      });
+      let payload;
+
+      if (pendingAuditPayment && pendingAuditContent) {
+        // === PAIEMENT AUDIT 3000 FCFA ===
+        payload = {
+          user_id: currentUser.id, user_email: currentUser.email,
+          amount: 3000, payment_method: selectedMethod, payer_phone: phone,
+          status: 'pending', payment_type: 'audit',
+          site_name: 'Audit IA — ' + new Date().toLocaleString('fr-FR', { day:'2-digit', month:'short' }),
+          site_id: new Date().toISOString().split('T')[0],
+          rsc_content: pendingAuditContent.substring(0, 50000),
+          config_data: { type: 'audit', preview: pendingAuditContent.substring(0, 200) }
+        };
+      } else if (pendingConfigData) {
+        // === PAIEMENT CONFIG 10000 FCFA ===
+        payload = {
+          user_id: currentUser.id, user_email: currentUser.email,
+          amount: PAYMENT_AMOUNT, payment_method: selectedMethod, payer_phone: phone,
+          status: 'pending', payment_type: 'config',
+          site_name: pendingConfigData.siteName, site_id: pendingConfigData.siteId,
+          rsc_content: pendingConfigData.rscContent,
+          config_data: { ssid: pendingConfigData.ssid, network_cidr: pendingConfigData.netCidr, profiles_count: pendingConfigData.profilesCount }
+        };
+      } else {
+        alert('Erreur : rien à payer.');
+        btn.disabled = false; btn.textContent = "J'ai payé · soumettre ma demande →";
+        return;
+      }
+
+      const { error } = await supa.from('payments').insert(payload);
       if (error) { alert('Erreur : ' + error.message); btn.disabled=false; btn.textContent="J'ai payé · soumettre ma demande →"; return; }
+
       document.getElementById('paymentStep1').style.display='none';
       document.getElementById('paymentStep2').style.display='block';
       pendingConfigData = null;
+      pendingAuditContent = null;
+      pendingAuditPayment = false;
     } catch (e) { alert('Erreur : ' + e.message); btn.disabled=false; btn.textContent="J'ai payé · soumettre ma demande →"; }
+  }
+
+  // Reset prix modal quand on ferme
+  function closePayment() {
+    document.getElementById('paymentModal').classList.remove('open');
+    pendingAuditPayment = false;
+    // Reset au prix config par défaut
+    document.querySelector('#paymentModal .pay-price').innerHTML = '10 000 <span style="font-size:18px;color:var(--ink-dim);">FCFA</span>';
+    document.querySelector('#paymentModal .pay-price-sub').textContent = 'Par configuration · valide à vie';
+    document.querySelector('#paymentModal .pay-step:nth-child(1) .pay-step-txt').innerHTML = 'Envoie <strong>10 000 FCFA</strong> au numéro ci-dessus via ton appli';
   }
 
   // ===== ROUTERS =====
@@ -1678,6 +1771,9 @@
     list.innerHTML = data.map(p => {
       const date = new Date(p.created_at).toLocaleString('fr-FR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
       const methodLabel = { wave:'Wave', om:'Orange Money', free:'Free Money' }[p.payment_method] || p.payment_method;
+      const typeLabel = p.payment_type === 'audit'
+        ? '<span class="badge-status" style="background:rgba(74,158,255,0.12);color:var(--blue);border:1px solid rgba(74,158,255,0.3);margin-left:6px;">🔍 Audit IA</span>'
+        : '<span class="badge-status" style="background:rgba(70,217,124,0.05);color:var(--green-dim);border:1px solid var(--green-dim);margin-left:6px;">⚙ Config</span>';
       const statusBadge = {
         pending:'<span class="badge-status badge-pending">⏳ En attente</span>',
         validated:'<span class="badge-status badge-validated">✓ Validé</span>',
@@ -1685,7 +1781,7 @@
       }[p.status];
       return `<div class="pay-row">
         <div class="pay-row-head">
-          <div><div class="pay-row-name">${escapeHtml(p.site_name||'—')}</div><div class="pay-row-email">${escapeHtml(p.user_email)} · ${escapeHtml(p.site_id||'')}</div></div>
+          <div><div class="pay-row-name">${escapeHtml(p.site_name||'—')}${typeLabel}</div><div class="pay-row-email">${escapeHtml(p.user_email)} · ${escapeHtml(p.site_id||'')}</div></div>
           ${statusBadge}
         </div>
         <div class="pay-row-grid">
@@ -1701,9 +1797,23 @@
   }
 
   async function validatePayment(id) {
-    if (!confirm('Valider ce paiement ? La config sera débloquée pour le client.')) return;
+    if (!confirm('Valider ce paiement ? Le service sera débloqué pour le client.')) return;
     const { data: pay, error: getErr } = await supa.from('payments').select('*').eq('id', id).single();
     if (getErr) { alert(getErr.message); return; }
+
+    // Si c'est un audit, on ne crée pas de config
+    if (pay.payment_type === 'audit') {
+      // Juste marquer comme validé — le client pourra refaire l'audit gratuitement
+      const { error: updErr } = await supa.from('payments').update({
+        status:'validated', validated_by: currentUser.id, validated_at: new Date().toISOString()
+      }).eq('id', id);
+      if (updErr) { alert(updErr.message); return; }
+      alert('✓ Paiement audit validé. Le client peut maintenant relancer son audit.');
+      await loadAdminPayments();
+      return;
+    }
+
+    // Paiement config classique : créer la config
     const { error: cfgErr } = await supa.from('configs').insert({
       user_id: pay.user_id, site_name: pay.site_name, site_id: pay.site_id,
       ssid: pay.config_data?.ssid || null, network_cidr: pay.config_data?.network_cidr || null,
@@ -1767,9 +1877,43 @@
     if (!content) { alert('Colle ou uploade ta config .rsc d\'abord.'); return; }
     if (content.length < 100) { alert('La config semble trop courte pour être valide.'); return; }
 
-    const findings = [];
+    // Garder le contenu en mémoire et déclencher la logique paiement
+    pendingAuditContent = content;
+    checkAuditPaymentAndRun();
+  }
 
-    // === RÈGLES D'AUDIT ===
+  async function checkAuditPaymentAndRun() {
+    if (!currentUser) { alert('Connecte-toi pour utiliser le vérificateur.'); return; }
+    const { data: freeCount } = await supa.rpc('free_audits_used_this_month', { uid: currentUser.id });
+    const isFree = (freeCount || 0) === 0;
+
+    if (isFree) {
+      // ✅ Audit gratuit du mois
+      await supa.from('payments').insert({
+        user_id: currentUser.id, user_email: currentUser.email,
+        amount: 0, payment_method: 'free', payer_phone: 'audit-gratuit-mensuel',
+        status: 'free', payment_type: 'audit',
+        site_name: 'Audit IA', site_id: new Date().toISOString().split('T')[0],
+        rsc_content: pendingAuditContent.substring(0, 5000)
+      });
+      performAudit(pendingAuditContent);
+      setTimeout(() => alert('🎁 Audit gratuit mensuel utilisé !'), 100);
+    } else {
+      // 💳 Paiement requis pour audit
+      pendingAuditPayment = true;
+      document.getElementById('paymentStep1').style.display = 'block';
+      document.getElementById('paymentStep2').style.display = 'none';
+      document.getElementById('payerPhone').value = '';
+      // Mettre à jour l'affichage du prix dans la modal
+      document.querySelector('#paymentModal .pay-price').innerHTML = '3 000 <span style="font-size:18px;color:var(--ink-dim);">FCFA</span>';
+      document.querySelector('#paymentModal .pay-price-sub').textContent = 'Vérificateur IA · audit complet';
+      document.querySelector('#paymentModal .pay-step:nth-child(1) .pay-step-txt').innerHTML = 'Envoie <strong>3 000 FCFA</strong> au numéro ci-dessus via ton appli';
+      document.getElementById('paymentModal').classList.add('open');
+    }
+  }
+
+  function performAudit(content) {
+    const findings = [];
 
     // 1. Mot de passe admin
     if (!/\/user\s+set\s+admin\s+password/i.test(content) && !/\/user\s+set\s+\[?\s*find\s+name=admin\]?\s+password/i.test(content)) {
@@ -1781,14 +1925,11 @@
         desc:'Le mot de passe admin est défini dans la config.' });
     }
 
-    // 2. WiFi sécurité
-    const wifiOpen = /security-profiles[^]*mode=none/i.test(content) || /ssid=[^]*?(?!.*wpa)/i.test(content);
     if (/\/interface wireless/i.test(content)) {
       findings.push({ level:'info', title:'Configuration WiFi détectée',
         desc:'WiFi en mode ouvert (sans WPA). C\'est normal pour un hotspot avec portail captif, mais à vérifier que le hotspot intercepte bien toutes les connexions.' });
     }
 
-    // 3. Walled garden
     if (/\/ip hotspot walled-garden/i.test(content)) {
       const matches = content.match(/\/ip hotspot walled-garden\s+add/g) || [];
       findings.push({ level:'ok', title:'Walled garden configuré',
@@ -1799,9 +1940,6 @@
         fix:'/ip hotspot walled-garden\nadd dst-host=*.wave.com action=allow comment="Wave"\nadd dst-host=*.orange.sn action=allow comment="Orange Money"\nadd dst-host=*.free.sn action=allow comment="Free Money"' });
     }
 
-    // 4. Rate limit / bande passante
-    const profilesWithRate = (content.match(/\/ip hotspot user profile[^]*?rate-limit=/g) || []).length;
-    const profilesTotal = (content.match(/\/ip hotspot user profile\s+(?:\n[^\/])*?add\s+name=/g) || content.match(/^add\s+name=\w+/gm) || []).length;
     if (!/rate-limit=/i.test(content)) {
       findings.push({ level:'warn', title:'Aucune limitation de bande passante',
         desc:'Aucun `rate-limit` détecté sur les profils. Un seul client peut saturer ta connexion WAN. Ajoute des limites selon ta vitesse internet.',
@@ -1811,17 +1949,15 @@
         desc:'Le rate-limit est configuré sur au moins un profil. Tes clients sont bridés selon le plan choisi.' });
     }
 
-    // 5. Anti-partage TTL
     if (/change-ttl/i.test(content) && /hotspot=auth/i.test(content)) {
       findings.push({ level:'ok', title:'Anti-partage TTL actif',
-        desc:'Le mangle TTL est configuré : tes clients ne peuvent pas partager leur connexion par tethering. Bonne sécurité contre les revenus perdus.' });
+        desc:'Le mangle TTL est configuré : tes clients ne peuvent pas partager leur connexion par tethering.' });
     } else {
       findings.push({ level:'warn', title:'Anti-partage TTL absent',
         desc:'Pas de règle mangle TTL détectée. Les clients peuvent partager leur ticket via tethering.',
         fix:'/ip firewall mangle\nadd action=change-ttl chain=postrouting comment="Anti-partage TTL" hotspot=auth new-ttl=set:1 passthrough=no' });
     }
 
-    // 6. NAT
     if (/\/ip firewall nat[^]*?action=masquerade/i.test(content)) {
       findings.push({ level:'ok', title:'NAT configuré',
         desc:'La règle de NAT (masquerade) est en place. Tes clients peuvent accéder à internet.' });
@@ -1831,7 +1967,6 @@
         fix:'/ip firewall nat\nadd action=masquerade chain=srcnat out-interface=ether1' });
     }
 
-    // 7. DNS
     if (/\/ip dns[^]*?allow-remote-requests=yes/i.test(content)) {
       findings.push({ level:'ok', title:'Serveur DNS local actif',
         desc:'Le routeur agit comme cache DNS pour tes clients. Bonne pratique pour la performance.' });
@@ -1840,7 +1975,6 @@
         desc:'DNS configuré mais sans cache local. Tu peux activer `allow-remote-requests=yes` pour accélérer la résolution.' });
     }
 
-    // 8. Firewall input
     if (/\/ip firewall filter/i.test(content) && /chain=input/i.test(content)) {
       findings.push({ level:'ok', title:'Firewall input configuré',
         desc:'Des règles firewall existent sur la chaîne input. Le routeur a une protection de base.' });
@@ -1850,7 +1984,6 @@
         fix:'/ip firewall filter\nadd action=drop chain=input in-interface=ether1 comment="Drop WAN input"' });
     }
 
-    // 9. Hotspot server
     if (/\/ip hotspot\s+add/i.test(content) || /\/ip hotspot\nadd/i.test(content)) {
       findings.push({ level:'ok', title:'Serveur hotspot actif',
         desc:'Un serveur hotspot est créé. La page captive devrait s\'afficher pour tes clients.' });
@@ -1859,7 +1992,6 @@
         desc:'Aucun serveur hotspot détecté. Tes clients ne verront pas la page captive et auront un accès libre.' });
     }
 
-    // 10. DHCP server
     if (/\/ip dhcp-server\s+add/i.test(content) || /\/ip dhcp-server\nadd/i.test(content)) {
       findings.push({ level:'ok', title:'DHCP server actif',
         desc:'Le DHCP distribue automatiquement des IPs aux clients connectés.' });
@@ -1868,7 +2000,6 @@
         desc:'Aucun serveur DHCP détecté. Les clients devront entrer leur IP manuellement.' });
     }
 
-    // 11. Script Mikhmon on-login (expiration vraie)
     if (/on-login=/i.test(content) && /system script add/i.test(content)) {
       findings.push({ level:'ok', title:'Script Mikhmon on-login présent',
         desc:'Le script qui corrige l\'expiration des tickets est en place. Tes tickets expireront vraiment à la fin de leur durée.' });
@@ -1880,7 +2011,6 @@
         desc:'Sans ce script, les tickets ne se désactivent pas automatiquement à expiration — les clients peuvent continuer à se connecter avec un ticket "expiré".' });
     }
 
-    // 12. Export complet ou tronqué ?
     if (/#interrupted/i.test(content) || /# interrupted/i.test(content)) {
       findings.push({ level:'warn', title:'Export interrompu',
         desc:'Le fichier contient `# interrupted` — l\'export RouterOS a été coupé. Refais un export complet : `/export file=backup-complet`',
@@ -1897,7 +2027,6 @@
     const scoreClass = score >= 75 ? 'good' : score >= 50 ? 'medium' : 'bad';
     const scoreLabel = score >= 75 ? 'Excellent' : score >= 50 ? 'À améliorer' : 'Critique';
 
-    // === AFFICHAGE ===
     let html = `
       <div class="score-bar">
         <div class="scl">
@@ -1911,7 +2040,6 @@
       </div>
     `;
 
-    // Trier : errors d'abord, puis warns, puis info, puis ok
     const order = { error: 0, warn: 1, info: 2, ok: 3 };
     findings.sort((a, b) => order[a.level] - order[b.level]);
 
@@ -1933,10 +2061,40 @@
     document.getElementById('auditScore').textContent = `SCORE : ${score}/100`;
     document.getElementById('auditResults').style.display = 'block';
 
-    // Scroll to results
     setTimeout(() => {
       document.getElementById('auditResults').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }, 100);
+  }
+
+  // ===== MIKHMON =====
+  async function loadMikhmonChips() {
+    const { data } = await supa.from('routers').select('*').eq('user_id', currentUser.id).order('name');
+    const wrap = document.getElementById('routerQuickSelect');
+    const chips = document.getElementById('routerChips');
+    if (!data || data.length === 0) {
+      wrap.style.display = 'none';
+      return;
+    }
+    wrap.style.display = 'block';
+    chips.innerHTML = data.map(r => {
+      const ip = r.ip_address || '—';
+      return `<button class="btn-sec" style="padding:6px 12px;font-size:11px;" onclick="copyToClipboard('${escapeHtml(ip)}', '✓ IP ${escapeHtml(ip)} copiée — colle dans Mikhmon')">${escapeHtml(r.name)} · ${escapeHtml(ip)}</button>`;
+    }).join('');
+  }
+
+  function copyToClipboard(text, msg) {
+    navigator.clipboard.writeText(text).then(() => {
+      // Petit toast en haut
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--green);color:var(--green);padding:10px 18px;font-family:var(--mono);font-size:12px;border-radius:2px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.4);';
+      toast.textContent = msg || '✓ Copié';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2500);
+    });
+  }
+
+  function openMikhmonExternal() {
+    window.open('https://laksa19.github.io/', '_blank');
   }
 </script>
 </body>
