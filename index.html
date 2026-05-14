@@ -165,6 +165,61 @@
   .hist-actions { display: flex; gap: 8px; margin-top: 10px; }
   .hist-actions button { flex: 1; padding: 8px; font-size: 10px; }
   .hist-empty { text-align: center; padding: 40px 20px; color: var(--ink-faint); font-family: var(--mono); font-size: 12px; }
+
+  /* ===== STATUS BADGES ===== */
+  .badge-status { display:inline-block; padding:3px 8px; border-radius:2px; font-family:var(--mono); font-size:9px; letter-spacing:0.1em; text-transform:uppercase; }
+  .badge-pending { background:rgba(245,197,66,0.12); color:var(--yellow); border:1px solid rgba(245,197,66,0.3); }
+  .badge-validated { background:rgba(70,217,124,0.12); color:var(--green); border:1px solid rgba(70,217,124,0.3); }
+  .badge-rejected { background:rgba(232,83,63,0.12); color:var(--red); border:1px solid rgba(232,83,63,0.3); }
+  .badge-free { background:rgba(70,217,124,0.05); color:var(--green-dim); border:1px solid var(--green-dim); }
+
+  /* ===== PAYMENT SCREEN ===== */
+  .pay-info { background:var(--bg); border:1px solid var(--green-dim); padding:18px; border-radius:2px; margin-bottom:18px; }
+  .pay-price { font-family:var(--serif); font-size:36px; font-weight:800; color:var(--green); letter-spacing:-0.02em; line-height:1; }
+  .pay-price-sub { font-family:var(--mono); font-size:10px; color:var(--ink-dim); margin-top:6px; letter-spacing:0.15em; text-transform:uppercase; }
+  .pay-methods { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:18px; }
+  .pay-method-card { background:var(--bg); border:1px solid var(--line-2); padding:14px 10px; border-radius:2px; text-align:center; cursor:pointer; transition:0.2s; }
+  .pay-method-card:active { transform:scale(0.97); }
+  .pay-method-card[data-selected="true"] { border-color:var(--green); background:linear-gradient(180deg, rgba(70,217,124,0.08), transparent); }
+  .pay-method-card .pmc-name { font-family:var(--mono); font-size:11px; font-weight:700; letter-spacing:0.08em; margin-top:6px; }
+  .pay-method-card .pmc-num { font-family:var(--mono); font-size:13px; color:var(--green); margin-top:6px; letter-spacing:0.05em; }
+  .pay-method-card .pmc-icon { width:32px; height:32px; margin:0 auto; border-radius:50%; display:grid; place-items:center; font-family:var(--mono); font-weight:800; font-size:13px; color:#000; }
+  .pay-method-card .pmc-wave { background:#1dc6ff; }
+  .pay-method-card .pmc-om { background:#ff6600; }
+  .pay-method-card .pmc-free { background:#f5c542; }
+
+  .pay-steps { background:var(--panel-2); padding:14px; border-radius:2px; margin-bottom:18px; }
+  .pay-step { display:flex; gap:10px; align-items:flex-start; padding:8px 0; }
+  .pay-step-num { width:22px; height:22px; min-width:22px; background:var(--green); color:#001008; border-radius:50%; display:grid; place-items:center; font-family:var(--mono); font-size:11px; font-weight:800; }
+  .pay-step-txt { font-size:13px; line-height:1.4; color:var(--ink); padding-top:2px; }
+  .pay-step-txt strong { color:var(--green); font-weight:600; }
+
+  .pay-waiting { padding:30px 20px; text-align:center; }
+  .pay-waiting .spinner { width:40px; height:40px; border:3px solid var(--line-2); border-top-color:var(--yellow); border-radius:50%; margin:0 auto 16px; animation:spin 1s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .pay-waiting h4 { font-family:var(--serif); font-size:22px; font-weight:700; margin-bottom:8px; }
+  .pay-waiting p { color:var(--ink-dim); font-size:13px; line-height:1.5; }
+
+  /* ===== ADMIN DASHBOARD ===== */
+  .admin-btn { background:rgba(245,197,66,0.1); border:1px solid rgba(245,197,66,0.3); color:var(--yellow); padding:6px 10px; font-family:var(--mono); font-size:9px; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; border-radius:2px; display:none; }
+  .admin-btn.visible { display:inline-block; }
+  .admin-btn:active { background:rgba(245,197,66,0.2); }
+
+  .admin-tabs { display:grid; grid-template-columns:1fr 1fr 1fr; gap:0; margin-bottom:20px; background:var(--bg); border:1px solid var(--line-2); border-radius:2px; overflow:hidden; }
+  .admin-tab { padding:12px; font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:0.12em; color:var(--ink-dim); cursor:pointer; text-align:center; border:none; background:transparent; transition:0.2s; }
+  .admin-tab.active { background:rgba(245,197,66,0.1); color:var(--yellow); }
+  .admin-tab .count { display:inline-block; background:var(--yellow); color:#000; font-size:9px; padding:1px 5px; border-radius:8px; margin-left:4px; font-weight:800; }
+
+  .pay-row { background:var(--panel); border:1px solid var(--line); padding:14px; margin-bottom:10px; border-radius:2px; }
+  .pay-row-head { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+  .pay-row-name { font-family:var(--serif); font-size:16px; font-weight:600; }
+  .pay-row-email { font-family:var(--mono); font-size:10px; color:var(--ink-dim); margin-top:2px; }
+  .pay-row-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; padding-top:10px; border-top:1px solid var(--line); font-family:var(--mono); font-size:11px; }
+  .pay-row-grid div { color:var(--ink-dim); }
+  .pay-row-grid div span { color:var(--green); display:block; margin-top:2px; }
+  .pay-row-actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+  .btn-validate { background:var(--green); color:#001008; border:none; padding:10px; font-family:var(--mono); font-size:11px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; border-radius:2px; }
+  .btn-reject { background:transparent; color:var(--red); border:1px solid var(--red); padding:10px; font-family:var(--mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; border-radius:2px; }
 </style>
 </head>
 <body>
@@ -222,6 +277,7 @@
     </div>
     <div class="user-bar">
       <span class="user-email" id="userEmail">—</span>
+      <button class="admin-btn" id="adminBtn" onclick="openAdmin()">⚡ Admin</button>
       <button class="header-btn primary" onclick="openHistory()">📁 Historique</button>
       <button class="header-btn" onclick="logout()">Sortir</button>
     </div>
@@ -391,6 +447,103 @@
   </div>
 </div>
 
+<!-- ===== PAYMENT MODAL ===== -->
+<div class="output" id="paymentModal">
+  <div class="output-inner">
+    <div class="output-head">
+      <div>
+        <div class="eyebrow">Paiement requis</div>
+        <h3>Débloquer la configuration</h3>
+      </div>
+      <button class="output-close" onclick="closePayment()">×</button>
+    </div>
+
+    <div id="paymentStep1">
+      <div class="pay-info">
+        <div class="pay-price">5 000 <span style="font-size:18px;color:var(--ink-dim);">FCFA</span></div>
+        <div class="pay-price-sub">Par configuration · valide à vie</div>
+      </div>
+
+      <label style="margin-bottom:8px;">Choisis ta méthode de paiement</label>
+      <div class="pay-methods">
+        <div class="pay-method-card" data-method="wave" data-selected="true" onclick="selectMethod('wave')">
+          <div class="pmc-icon pmc-wave">W</div>
+          <div class="pmc-name">WAVE</div>
+          <div class="pmc-num" id="num-wave">—</div>
+        </div>
+        <div class="pay-method-card" data-method="om" onclick="selectMethod('om')">
+          <div class="pmc-icon pmc-om">OM</div>
+          <div class="pmc-name">ORANGE</div>
+          <div class="pmc-num" id="num-om">—</div>
+        </div>
+        <div class="pay-method-card" data-method="free" onclick="selectMethod('free')">
+          <div class="pmc-icon pmc-free">F</div>
+          <div class="pmc-name">FREE</div>
+          <div class="pmc-num" id="num-free">—</div>
+        </div>
+      </div>
+
+      <div class="pay-steps">
+        <div class="pay-step">
+          <div class="pay-step-num">1</div>
+          <div class="pay-step-txt">Envoie <strong>5 000 FCFA</strong> au numéro ci-dessus via ton appli</div>
+        </div>
+        <div class="pay-step">
+          <div class="pay-step-num">2</div>
+          <div class="pay-step-txt">Entre ton <strong>numéro qui a payé</strong> ci-dessous</div>
+        </div>
+        <div class="pay-step">
+          <div class="pay-step-num">3</div>
+          <div class="pay-step-txt">Clique <strong>« J'ai payé »</strong> — validation sous 5-30 min</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Ton numéro de téléphone (qui a payé) *</label>
+        <input type="text" id="payerPhone" placeholder="77 123 45 67" />
+      </div>
+
+      <button class="btn-primary" id="payConfirmBtn" onclick="confirmPayment()" style="width:100%;">
+        J'ai payé · soumettre ma demande →
+      </button>
+    </div>
+
+    <div id="paymentStep2" style="display:none;">
+      <div class="pay-waiting">
+        <div class="spinner"></div>
+        <h4>Demande envoyée !</h4>
+        <p>Ton paiement est en attente de validation par un administrateur.<br><br>
+        Tu recevras ta configuration dès qu'elle sera validée (généralement sous <strong>5 à 30 minutes</strong>).<br><br>
+        Tu peux fermer cette fenêtre. Ta config apparaîtra dans <strong>📁 Historique</strong> dès validation.</p>
+        <button class="btn-sec" style="margin-top:20px;" onclick="closePayment()">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ADMIN MODAL ===== -->
+<div class="output" id="adminModal">
+  <div class="output-inner">
+    <div class="output-head">
+      <div>
+        <div class="eyebrow" style="color:var(--yellow);">⚡ Espace admin</div>
+        <h3>Validation des paiements</h3>
+      </div>
+      <button class="output-close" onclick="closeAdmin()">×</button>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-status="pending" onclick="adminTab('pending')">En attente <span class="count" id="cnt-pending">0</span></button>
+      <button class="admin-tab" data-status="validated" onclick="adminTab('validated')">Validés <span class="count" id="cnt-validated">0</span></button>
+      <button class="admin-tab" data-status="rejected" onclick="adminTab('rejected')">Rejetés <span class="count" id="cnt-rejected">0</span></button>
+    </div>
+
+    <div id="adminList" class="hist-list">
+      <div class="hist-empty">Chargement...</div>
+    </div>
+  </div>
+</div>
+
 <footer>SIKHANE-TECH v2 · Made for Sénégal <span class="flag"></span> · Made by SIKHANE-TECH</footer>
 
 <script>
@@ -401,8 +554,21 @@
   const SUPABASE_KEY = 'sb_publishable_VNYuFFbE-pUGAJKV5pLZRQ_SPB8S9v-';
   // ============================================================
 
+  // ============================================================
+  // NUMÉROS DE PAIEMENT — REMPLACE PAR TES VRAIS NUMÉROS
+  // ============================================================
+  const PAYMENT_NUMBERS = {
+    wave: '78 793 90 90',
+    om:   '78 793 90 90',
+    free: '76 541 62 98'
+  };
+  const PAYMENT_AMOUNT = 5000; // FCFA
+  // ============================================================
+
   const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   let currentUser = null;
+  let isAdmin = false;
+  let pendingConfigData = null; // garde la config en attente de paiement
 
   // ===== AUTH =====
   let authMode = 'login';
@@ -468,10 +634,27 @@
     }
   }
 
-  function enterApp() {
+  async function enterApp() {
     document.getElementById('authScreen').classList.add('hidden');
     document.getElementById('mainApp').style.display = 'block';
     document.getElementById('userEmail').textContent = currentUser.email;
+
+    // Afficher les numéros de paiement dans la modal
+    document.getElementById('num-wave').textContent = PAYMENT_NUMBERS.wave;
+    document.getElementById('num-om').textContent = PAYMENT_NUMBERS.om;
+    document.getElementById('num-free').textContent = PAYMENT_NUMBERS.free;
+
+    // Vérifier si admin
+    const { data: adminCheck } = await supa
+      .from('admins')
+      .select('user_id')
+      .eq('user_id', currentUser.id)
+      .maybeSingle();
+
+    if (adminCheck) {
+      isAdmin = true;
+      document.getElementById('adminBtn').classList.add('visible');
+    }
   }
 
   async function logout() {
@@ -809,25 +992,57 @@
     document.getElementById('outTitle').textContent = `${siteId}.rsc`;
     document.getElementById('output').classList.add('open');
 
-    // ===== SAUVEGARDE SUPABASE =====
+    // ===== LOGIQUE PAIEMENT =====
     if (currentUser) {
-      try {
-        const { error } = await supa.from('configs').insert({
-          user_id: currentUser.id,
-          site_name: siteName,
-          site_id: siteId,
-          ssid: ssid,
-          network_cidr: netCidr,
-          profiles_count: profiles.length,
-          rsc_content: r
-        });
-        if (error) {
-          console.error('Erreur sauvegarde :', error);
-        } else {
-          console.log('✓ Config sauvegardée dans l\'historique');
+      // Vérifier le quota gratuit du mois
+      const { data: freeCount, error: freeErr } = await supa
+        .rpc('free_configs_used_this_month', { uid: currentUser.id });
+
+      const freeUsed = freeCount || 0;
+      const isFree = freeUsed === 0;
+
+      if (isFree) {
+        // ✅ CONFIG GRATUITE — sauvegarde directe
+        try {
+          await supa.from('configs').insert({
+            user_id: currentUser.id,
+            site_name: siteName,
+            site_id: siteId,
+            ssid: ssid,
+            network_cidr: netCidr,
+            profiles_count: profiles.length,
+            rsc_content: r
+          });
+          // Marquer comme "free" dans payments pour compter
+          await supa.from('payments').insert({
+            user_id: currentUser.id,
+            user_email: currentUser.email,
+            amount: 0,
+            payment_method: 'free',
+            payer_phone: 'gratuit-mensuel',
+            status: 'free',
+            site_name: siteName,
+            site_id: siteId,
+            rsc_content: r
+          });
+          alert('🎁 Configuration gratuite mensuelle utilisée ! Tu peux la voir dans 📁 Historique.');
+        } catch (e) {
+          console.error('Erreur sauvegarde gratuite :', e);
         }
-      } catch (e) {
-        console.error('Erreur sauvegarde :', e);
+      } else {
+        // 💳 PAIEMENT REQUIS — garder la config en mémoire et ouvrir modal paiement
+        pendingConfigData = {
+          siteName, siteId, ssid, netCidr,
+          profilesCount: profiles.length,
+          rscContent: r
+        };
+        // Fermer la modal output, ouvrir la modal paiement
+        document.getElementById('output').classList.remove('open');
+        document.getElementById('paymentStep1').style.display = 'block';
+        document.getElementById('paymentStep2').style.display = 'none';
+        document.getElementById('payerPhone').value = '';
+        document.getElementById('paymentModal').classList.add('open');
+        return;
       }
     }
   }
@@ -849,6 +1064,177 @@
     const a = document.createElement('a');
     a.href = url; a.download = `sikhane-${siteId.toLowerCase()}.rsc`; a.click();
     URL.revokeObjectURL(url);
+  }
+
+  // ============================================================
+  // PAIEMENT
+  // ============================================================
+  let selectedMethod = 'wave';
+  function selectMethod(m) {
+    selectedMethod = m;
+    document.querySelectorAll('.pay-method-card').forEach(c => {
+      c.dataset.selected = c.dataset.method === m ? 'true' : 'false';
+    });
+  }
+  function closePayment() { document.getElementById('paymentModal').classList.remove('open'); }
+
+  async function confirmPayment() {
+    const phone = document.getElementById('payerPhone').value.trim();
+    if (!phone) { alert('Entre ton numéro de téléphone qui a payé.'); return; }
+    if (!pendingConfigData) { alert('Erreur : aucune configuration en attente.'); return; }
+
+    const btn = document.getElementById('payConfirmBtn');
+    btn.disabled = true;
+    btn.textContent = 'Envoi...';
+
+    try {
+      const { error } = await supa.from('payments').insert({
+        user_id: currentUser.id,
+        user_email: currentUser.email,
+        amount: PAYMENT_AMOUNT,
+        payment_method: selectedMethod,
+        payer_phone: phone,
+        status: 'pending',
+        site_name: pendingConfigData.siteName,
+        site_id: pendingConfigData.siteId,
+        rsc_content: pendingConfigData.rscContent,
+        config_data: {
+          ssid: pendingConfigData.ssid,
+          network_cidr: pendingConfigData.netCidr,
+          profiles_count: pendingConfigData.profilesCount
+        }
+      });
+
+      if (error) {
+        alert('Erreur : ' + error.message);
+        btn.disabled = false;
+        btn.textContent = "J'ai payé · soumettre ma demande →";
+        return;
+      }
+
+      document.getElementById('paymentStep1').style.display = 'none';
+      document.getElementById('paymentStep2').style.display = 'block';
+      pendingConfigData = null;
+    } catch (e) {
+      alert('Erreur : ' + e.message);
+      btn.disabled = false;
+      btn.textContent = "J'ai payé · soumettre ma demande →";
+    }
+  }
+
+  // ============================================================
+  // ADMIN
+  // ============================================================
+  let currentAdminTab = 'pending';
+
+  async function openAdmin() {
+    if (!isAdmin) { alert('Accès refusé.'); return; }
+    document.getElementById('adminModal').classList.add('open');
+    await loadAdminPayments();
+  }
+  function closeAdmin() { document.getElementById('adminModal').classList.remove('open'); }
+
+  async function adminTab(status) {
+    currentAdminTab = status;
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.toggle('active', t.dataset.status === status));
+    await loadAdminPayments();
+  }
+
+  async function loadAdminPayments() {
+    const list = document.getElementById('adminList');
+    list.innerHTML = '<div class="hist-empty">Chargement...</div>';
+
+    for (const s of ['pending', 'validated', 'rejected']) {
+      const { count } = await supa.from('payments').select('*', { count: 'exact', head: true }).eq('status', s);
+      document.getElementById('cnt-' + s).textContent = count || 0;
+    }
+
+    const { data, error } = await supa
+      .from('payments')
+      .select('*')
+      .eq('status', currentAdminTab)
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (error) { list.innerHTML = `<div class="hist-empty">Erreur : ${error.message}</div>`; return; }
+    if (!data || data.length === 0) { list.innerHTML = '<div class="hist-empty">Aucun paiement dans cette catégorie.</div>'; return; }
+
+    list.innerHTML = data.map(p => {
+      const date = new Date(p.created_at).toLocaleString('fr-FR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+      const methodLabel = { wave:'Wave', om:'Orange Money', free:'Free Money' }[p.payment_method] || p.payment_method;
+      const statusBadge = {
+        pending:'<span class="badge-status badge-pending">⏳ En attente</span>',
+        validated:'<span class="badge-status badge-validated">✓ Validé</span>',
+        rejected:'<span class="badge-status badge-rejected">✗ Rejeté</span>'
+      }[p.status];
+
+      return `
+        <div class="pay-row">
+          <div class="pay-row-head">
+            <div>
+              <div class="pay-row-name">${escapeHtml(p.site_name || '—')}</div>
+              <div class="pay-row-email">${escapeHtml(p.user_email)} · ${escapeHtml(p.site_id || '')}</div>
+            </div>
+            ${statusBadge}
+          </div>
+          <div class="pay-row-grid">
+            <div>Montant<span>${p.amount} FCFA</span></div>
+            <div>Méthode<span>${methodLabel}</span></div>
+            <div>Numéro payeur<span>${escapeHtml(p.payer_phone)}</span></div>
+            <div>Date<span>${date}</span></div>
+          </div>
+          ${p.status === 'pending' ? `
+            <div class="pay-row-actions">
+              <button class="btn-validate" onclick="validatePayment('${p.id}')">✓ Valider</button>
+              <button class="btn-reject" onclick="rejectPayment('${p.id}')">✗ Rejeter</button>
+            </div>
+          ` : ''}
+          ${p.admin_note ? `<div style="margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--ink-faint);">Note: ${escapeHtml(p.admin_note)}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function validatePayment(id) {
+    if (!confirm('Valider ce paiement ? La config sera débloquée pour le client.')) return;
+
+    const { data: pay, error: getErr } = await supa.from('payments').select('*').eq('id', id).single();
+    if (getErr) { alert('Erreur : ' + getErr.message); return; }
+
+    const { error: cfgErr } = await supa.from('configs').insert({
+      user_id: pay.user_id,
+      site_name: pay.site_name,
+      site_id: pay.site_id,
+      ssid: pay.config_data?.ssid || null,
+      network_cidr: pay.config_data?.network_cidr || null,
+      profiles_count: pay.config_data?.profiles_count || 0,
+      rsc_content: pay.rsc_content
+    });
+    if (cfgErr) { alert('Erreur création config : ' + cfgErr.message); return; }
+
+    const { error: updErr } = await supa.from('payments').update({
+      status: 'validated',
+      validated_by: currentUser.id,
+      validated_at: new Date().toISOString()
+    }).eq('id', id);
+    if (updErr) { alert('Erreur validation : ' + updErr.message); return; }
+
+    await loadAdminPayments();
+  }
+
+  async function rejectPayment(id) {
+    const note = prompt('Raison du rejet (optionnel) :', 'Paiement non reçu');
+    if (note === null) return;
+
+    const { error } = await supa.from('payments').update({
+      status: 'rejected',
+      validated_by: currentUser.id,
+      validated_at: new Date().toISOString(),
+      admin_note: note
+    }).eq('id', id);
+
+    if (error) { alert('Erreur : ' + error.message); return; }
+    await loadAdminPayments();
   }
 </script>
 </body>
