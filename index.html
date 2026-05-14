@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   :root {
@@ -483,6 +484,78 @@
   .capt-tariff { background: var(--bg); border: 1px solid var(--line-2); border-radius: 2px; padding: 10px; margin-bottom: 8px; display: grid; grid-template-columns: 1fr 1fr 1fr 32px; gap: 6px; align-items: center; }
   .capt-tariff input { padding: 8px 10px; font-size: 12px; }
   .capt-tariff .ct-del { background: none; border: 1px solid var(--line-2); color: var(--red); width: 32px; height: 32px; cursor: pointer; font-family: var(--mono); border-radius: 2px; font-size: 14px; }
+
+  /* ===== ADMIN SUB-TABS (Paiements / Stats / Clients) ===== */
+  .admin-subtabs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; margin-bottom: 22px; background: var(--bg); border: 1px solid var(--line-2); border-radius: 2px; overflow: hidden; }
+  .admin-subtab { padding: 14px; font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-dim); cursor: pointer; text-align: center; border: none; background: transparent; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .admin-subtab:hover { color: var(--ink); }
+  .admin-subtab.active { background: rgba(245,197,66,0.1); color: var(--yellow); }
+  .admin-subtab svg { width: 14px; height: 14px; }
+  .admin-section { display: none; }
+  .admin-section.active { display: block; animation: fadeIn 0.3s; }
+
+  /* Charts */
+  .chart-wrap { background: var(--panel); border: 1px solid var(--line); padding: 20px; border-radius: 2px; margin-bottom: 16px; }
+  .chart-wrap-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+  .chart-wrap h4 { font-family: var(--serif); font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+  .chart-wrap .chart-sub { font-family: var(--mono); font-size: 10px; color: var(--ink-dim); margin-top: 4px; letter-spacing: 0.1em; text-transform: uppercase; }
+  .chart-canvas-wrap { position: relative; height: 280px; }
+  .chart-canvas-wrap.donut { height: 240px; }
+
+  .chart-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; }
+  @media (max-width: 800px) { .chart-grid { grid-template-columns: 1fr; } }
+
+  /* KPI grands chiffres */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 22px; }
+  .kpi-card { background: var(--panel); border: 1px solid var(--line); padding: 18px; border-radius: 2px; position: relative; overflow: hidden; }
+  .kpi-card::after { content: ''; position: absolute; top: 0; left: 0; height: 3px; width: 40%; background: var(--green); }
+  .kpi-card.yellow::after { background: var(--yellow); }
+  .kpi-card.blue::after { background: var(--blue); }
+  .kpi-card.purple::after { background: #a75ae6; }
+  .kpi-label { font-family: var(--mono); font-size: 9px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.15em; }
+  .kpi-value { font-family: var(--serif); font-size: 30px; font-weight: 800; line-height: 1; margin-top: 8px; letter-spacing: -0.02em; }
+  .kpi-value .unit { font-size: 14px; color: var(--ink-dim); font-weight: 400; }
+  .kpi-trend { font-family: var(--mono); font-size: 10px; margin-top: 8px; letter-spacing: 0.05em; }
+  .kpi-trend.up { color: var(--green); }
+  .kpi-trend.down { color: var(--red); }
+  .kpi-trend.neutral { color: var(--ink-faint); }
+
+  /* Clients table */
+  .clients-toolbar { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; margin-bottom: 14px; align-items: center; }
+  .clients-toolbar input { padding: 10px 12px; font-size: 13px; }
+  .clients-toolbar select { padding: 10px 12px; font-size: 12px; }
+  @media (max-width: 600px) { .clients-toolbar { grid-template-columns: 1fr; } }
+
+  .clients-table-wrap { background: var(--panel); border: 1px solid var(--line); border-radius: 2px; overflow-x: auto; }
+  .clients-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .clients-table thead { background: var(--bg-2); }
+  .clients-table th { text-align: left; padding: 12px 14px; font-family: var(--mono); font-size: 10px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.12em; border-bottom: 1px solid var(--line); cursor: pointer; user-select: none; }
+  .clients-table th:hover { color: var(--ink); }
+  .clients-table th .sort-icon { display: inline-block; margin-left: 4px; opacity: 0.4; }
+  .clients-table th.sorted .sort-icon { opacity: 1; color: var(--green); }
+  .clients-table td { padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .clients-table tr:hover td { background: var(--panel-2); }
+  .clients-table tr:last-child td { border-bottom: none; }
+  .clients-table .ct-revenue { font-family: var(--mono); font-weight: 700; color: var(--green); }
+  .clients-table .ct-count { font-family: var(--mono); color: var(--ink-dim); }
+  .clients-table .ct-email { font-family: var(--mono); font-size: 12px; }
+  .clients-table-empty { text-align: center; padding: 40px; color: var(--ink-faint); font-family: var(--mono); font-size: 12px; }
+
+  /* Export button */
+  .btn-export { background: transparent; border: 1px solid var(--line-2); color: var(--ink); padding: 10px 14px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; border-radius: 2px; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-export:hover { border-color: var(--green); color: var(--green); }
+  .btn-export svg { width: 14px; height: 14px; }
+
+  /* Repartition cards */
+  .rep-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 14px; }
+  .rep-card { background: var(--bg); border: 1px solid var(--line-2); padding: 14px; border-radius: 2px; text-align: center; position: relative; }
+  .rep-card.config { border-top: 2px solid var(--green-dim); }
+  .rep-card.audit { border-top: 2px solid var(--blue); }
+  .rep-card.captive { border-top: 2px solid #a75ae6; }
+  .rep-card .rep-name { font-family: var(--mono); font-size: 9px; color: var(--ink-dim); letter-spacing: 0.15em; text-transform: uppercase; }
+  .rep-card .rep-revenue { font-family: var(--serif); font-size: 22px; font-weight: 700; margin-top: 6px; }
+  .rep-card .rep-count { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); margin-top: 4px; }
+  .rep-card .rep-share { font-family: var(--mono); font-size: 10px; color: var(--green); margin-top: 4px; letter-spacing: 0.05em; }
 
   /* MISC */
   .flag-sn { display: inline-block; width: 14px; height: 9px; background: linear-gradient(90deg, #00853f 33%, #fdef42 33% 66%, #e31b23 66%); vertical-align: middle; }
@@ -1349,17 +1422,124 @@
     <div class="page" id="page-admin">
       <div class="page-head">
         <div class="page-eyebrow" style="color:var(--yellow);">⚡ Espace admin</div>
-        <h1 class="page-title">Validation <em>paiements</em></h1>
-        <p class="page-lede">Vérifie que tu as bien reçu le paiement Wave/OM/Free, puis clique « Valider » pour débloquer la config du client.</p>
+        <h1 class="page-title">Tableau de <em>bord</em></h1>
+        <p class="page-lede">Gère tes paiements, surveille tes revenus et explore ta base de clients.</p>
       </div>
 
-      <div class="admin-tabs">
-        <button class="admin-tab active" data-status="pending" onclick="adminTab('pending')">En attente <span class="count" id="cnt-pending">0</span></button>
-        <button class="admin-tab" data-status="validated" onclick="adminTab('validated')">Validés <span class="count" id="cnt-validated">0</span></button>
-        <button class="admin-tab" data-status="rejected" onclick="adminTab('rejected')">Rejetés <span class="count" id="cnt-rejected">0</span></button>
+      <!-- Sous-onglets admin -->
+      <div class="admin-subtabs">
+        <button class="admin-subtab active" data-asub="payments" onclick="adminSubtab('payments')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          Paiements
+        </button>
+        <button class="admin-subtab" data-asub="stats" onclick="adminSubtab('stats')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Statistiques
+        </button>
+        <button class="admin-subtab" data-asub="clients" onclick="adminSubtab('clients')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Clients
+        </button>
       </div>
 
-      <div id="adminList" class="hist-list"><div class="hist-empty">Chargement...</div></div>
+      <!-- SECTION : Paiements -->
+      <div class="admin-section active" id="asec-payments">
+        <div class="admin-tabs">
+          <button class="admin-tab active" data-status="pending" onclick="adminTab('pending')">En attente <span class="count" id="cnt-pending">0</span></button>
+          <button class="admin-tab" data-status="validated" onclick="adminTab('validated')">Validés <span class="count" id="cnt-validated">0</span></button>
+          <button class="admin-tab" data-status="rejected" onclick="adminTab('rejected')">Rejetés <span class="count" id="cnt-rejected">0</span></button>
+        </div>
+        <div id="adminList" class="hist-list"><div class="hist-empty">Chargement...</div></div>
+      </div>
+
+      <!-- SECTION : Statistiques -->
+      <div class="admin-section" id="asec-stats">
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">CA Total</div>
+            <div class="kpi-value" id="kpiTotalRev">— <span class="unit">FCFA</span></div>
+            <div class="kpi-trend neutral" id="kpiTotalTrend">Depuis le lancement</div>
+          </div>
+          <div class="kpi-card yellow">
+            <div class="kpi-label">CA ce mois-ci</div>
+            <div class="kpi-value" id="kpiMonthRev">— <span class="unit">FCFA</span></div>
+            <div class="kpi-trend" id="kpiMonthTrend">—</div>
+          </div>
+          <div class="kpi-card blue">
+            <div class="kpi-label">Paiements validés</div>
+            <div class="kpi-value" id="kpiValidCount">—</div>
+            <div class="kpi-trend neutral" id="kpiValidTrend">Total cumulé</div>
+          </div>
+          <div class="kpi-card purple">
+            <div class="kpi-label">Clients payants</div>
+            <div class="kpi-value" id="kpiClientCount">—</div>
+            <div class="kpi-trend neutral">Comptes uniques</div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="chart-grid">
+          <div class="chart-wrap">
+            <div class="chart-wrap-head">
+              <div>
+                <h4>Évolution mensuelle du CA</h4>
+                <div class="chart-sub">12 derniers mois</div>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap"><canvas id="chartMonthly"></canvas></div>
+          </div>
+          <div class="chart-wrap">
+            <div class="chart-wrap-head">
+              <div>
+                <h4>Répartition des services</h4>
+                <div class="chart-sub">Par CA généré</div>
+              </div>
+            </div>
+            <div class="chart-canvas-wrap donut"><canvas id="chartRepartition"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Répartition détaillée -->
+        <div class="chart-wrap">
+          <h4>Détail par service</h4>
+          <div class="rep-grid" id="repGrid"></div>
+        </div>
+      </div>
+
+      <!-- SECTION : Clients -->
+      <div class="admin-section" id="asec-clients">
+        <div class="clients-toolbar">
+          <input type="text" id="clientSearch" placeholder="🔍 Rechercher par email..." oninput="filterClients()" />
+          <select id="clientSortBy" onchange="sortClients()">
+            <option value="revenue_desc">CA décroissant</option>
+            <option value="revenue_asc">CA croissant</option>
+            <option value="count_desc">Plus de paiements</option>
+            <option value="recent">Plus récent</option>
+            <option value="email">Email A→Z</option>
+          </select>
+          <button class="btn-export" onclick="exportClientsCSV()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            CSV
+          </button>
+        </div>
+
+        <div class="clients-table-wrap">
+          <table class="clients-table" id="clientsTable">
+            <thead>
+              <tr>
+                <th onclick="setClientSort('email')">Client <span class="sort-icon">↕</span></th>
+                <th onclick="setClientSort('count_desc')" style="text-align:center;">Paiements <span class="sort-icon">↕</span></th>
+                <th onclick="setClientSort('revenue_desc')" style="text-align:right;">CA Total <span class="sort-icon">↕</span></th>
+                <th onclick="setClientSort('recent')" style="text-align:right;">Dernier <span class="sort-icon">↕</span></th>
+              </tr>
+            </thead>
+            <tbody id="clientsTableBody">
+              <tr><td colspan="4" class="clients-table-empty">Chargement...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
 
   </main>
@@ -3137,6 +3317,335 @@ SIKHANE-TECH · sikhane-tech.com
       }
     }
   })();
+
+  // ============================================================
+  // ADMIN SUB-TABS (Paiements / Stats / Clients)
+  // ============================================================
+  function adminSubtab(name) {
+    document.querySelectorAll('.admin-subtab').forEach(t => t.classList.toggle('active', t.dataset.asub === name));
+    document.querySelectorAll('.admin-section').forEach(s => s.classList.toggle('active', s.id === 'asec-' + name));
+    if (name === 'payments') loadAdminPayments();
+    if (name === 'stats') loadAdminStats();
+    if (name === 'clients') loadAdminClients();
+  }
+
+  // ============================================================
+  // STATISTIQUES ADMIN
+  // ============================================================
+  var chartMonthlyInst = null;
+  var chartRepartitionInst = null;
+
+  async function loadAdminStats() {
+    if (!isAdmin) return;
+
+    // Récupérer tous les paiements validés
+    const { data: allPays, error } = await supa
+      .from('payments')
+      .select('*')
+      .eq('status', 'validated')
+      .order('created_at', { ascending: true });
+
+    if (error) { console.error(error); return; }
+
+    const validated = allPays || [];
+
+    // === KPIs ===
+    const totalRev = validated.reduce((s, p) => s + (p.amount || 0), 0);
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const lastMonthEnd = monthStart;
+
+    const monthRev = validated.filter(p => new Date(p.created_at) >= monthStart).reduce((s, p) => s + (p.amount || 0), 0);
+    const lastMonthRev = validated.filter(p => {
+      const d = new Date(p.created_at);
+      return d >= lastMonthStart && d < lastMonthEnd;
+    }).reduce((s, p) => s + (p.amount || 0), 0);
+
+    const uniqueClients = new Set(validated.map(p => p.user_id)).size;
+
+    document.getElementById('kpiTotalRev').innerHTML = totalRev.toLocaleString('fr-FR') + ' <span class="unit">FCFA</span>';
+    document.getElementById('kpiMonthRev').innerHTML = monthRev.toLocaleString('fr-FR') + ' <span class="unit">FCFA</span>';
+    document.getElementById('kpiValidCount').textContent = validated.length;
+    document.getElementById('kpiClientCount').textContent = uniqueClients;
+
+    // Trend mois
+    const trendEl = document.getElementById('kpiMonthTrend');
+    if (lastMonthRev > 0) {
+      const pct = Math.round(((monthRev - lastMonthRev) / lastMonthRev) * 100);
+      if (pct > 0) {
+        trendEl.className = 'kpi-trend up';
+        trendEl.textContent = `▲ +${pct}% vs mois dernier`;
+      } else if (pct < 0) {
+        trendEl.className = 'kpi-trend down';
+        trendEl.textContent = `▼ ${pct}% vs mois dernier`;
+      } else {
+        trendEl.className = 'kpi-trend neutral';
+        trendEl.textContent = '= comme mois dernier';
+      }
+    } else if (monthRev > 0) {
+      trendEl.className = 'kpi-trend up';
+      trendEl.textContent = '▲ 1er mois actif';
+    } else {
+      trendEl.className = 'kpi-trend neutral';
+      trendEl.textContent = 'Aucune vente ce mois';
+    }
+
+    // === GRAPHIQUE ÉVOLUTION MENSUELLE ===
+    const monthlyData = {};
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = d.toISOString().substring(0, 7); // YYYY-MM
+      monthlyData[key] = { label: d.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }), revenue: 0, count: 0 };
+    }
+    validated.forEach(p => {
+      const key = p.created_at.substring(0, 7);
+      if (monthlyData[key]) {
+        monthlyData[key].revenue += p.amount || 0;
+        monthlyData[key].count++;
+      }
+    });
+
+    const labels = Object.values(monthlyData).map(m => m.label);
+    const revenues = Object.values(monthlyData).map(m => m.revenue);
+    const counts = Object.values(monthlyData).map(m => m.count);
+
+    if (chartMonthlyInst) chartMonthlyInst.destroy();
+    const ctxM = document.getElementById('chartMonthly');
+    if (ctxM && typeof Chart !== 'undefined') {
+      chartMonthlyInst = new Chart(ctxM, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'CA (FCFA)',
+            data: revenues,
+            backgroundColor: 'rgba(70, 217, 124, 0.7)',
+            borderColor: '#46d97c',
+            borderWidth: 1,
+            borderRadius: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#131815',
+              titleColor: '#e6efe8',
+              bodyColor: '#e6efe8',
+              borderColor: '#2a332d',
+              borderWidth: 1,
+              padding: 10,
+              callbacks: {
+                label: (ctx) => ctx.parsed.y.toLocaleString('fr-FR') + ' FCFA · ' + counts[ctx.dataIndex] + ' paiement(s)'
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: '#1f2622' },
+              ticks: {
+                color: '#8a9690',
+                font: { family: 'JetBrains Mono', size: 10 },
+                callback: (v) => (v >= 1000 ? (v/1000) + 'k' : v)
+              }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { color: '#8a9690', font: { family: 'JetBrains Mono', size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    // === GRAPHIQUE RÉPARTITION DONUT ===
+    const byType = { config: { rev: 0, count: 0 }, audit: { rev: 0, count: 0 }, captive: { rev: 0, count: 0 } };
+    validated.forEach(p => {
+      const t = p.payment_type || 'config';
+      if (byType[t]) {
+        byType[t].rev += p.amount || 0;
+        byType[t].count++;
+      }
+    });
+
+    if (chartRepartitionInst) chartRepartitionInst.destroy();
+    const ctxR = document.getElementById('chartRepartition');
+    if (ctxR && typeof Chart !== 'undefined') {
+      chartRepartitionInst = new Chart(ctxR, {
+        type: 'doughnut',
+        data: {
+          labels: ['Config', 'Audit IA', 'Page Captive'],
+          datasets: [{
+            data: [byType.config.rev, byType.audit.rev, byType.captive.rev],
+            backgroundColor: ['#46d97c', '#4a9eff', '#a75ae6'],
+            borderColor: '#131815',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { color: '#e6efe8', font: { family: 'JetBrains Mono', size: 11 }, padding: 12, usePointStyle: true }
+            },
+            tooltip: {
+              backgroundColor: '#131815',
+              titleColor: '#e6efe8',
+              bodyColor: '#e6efe8',
+              borderColor: '#2a332d',
+              borderWidth: 1,
+              padding: 10,
+              callbacks: {
+                label: (ctx) => ctx.label + ' : ' + ctx.parsed.toLocaleString('fr-FR') + ' FCFA'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // === DÉTAIL PAR SERVICE ===
+    const repGrid = document.getElementById('repGrid');
+    repGrid.innerHTML = `
+      <div class="rep-card config">
+        <div class="rep-name">⚙ Config Mikrotik</div>
+        <div class="rep-revenue">${byType.config.rev.toLocaleString('fr-FR')} F</div>
+        <div class="rep-count">${byType.config.count} vente(s)</div>
+        <div class="rep-share">${totalRev > 0 ? Math.round((byType.config.rev / totalRev) * 100) : 0}% du CA</div>
+      </div>
+      <div class="rep-card audit">
+        <div class="rep-name">🔍 Audit IA</div>
+        <div class="rep-revenue">${byType.audit.rev.toLocaleString('fr-FR')} F</div>
+        <div class="rep-count">${byType.audit.count} vente(s)</div>
+        <div class="rep-share">${totalRev > 0 ? Math.round((byType.audit.rev / totalRev) * 100) : 0}% du CA</div>
+      </div>
+      <div class="rep-card captive">
+        <div class="rep-name">📱 Page Captive</div>
+        <div class="rep-revenue">${byType.captive.rev.toLocaleString('fr-FR')} F</div>
+        <div class="rep-count">${byType.captive.count} vente(s)</div>
+        <div class="rep-share">${totalRev > 0 ? Math.round((byType.captive.rev / totalRev) * 100) : 0}% du CA</div>
+      </div>
+    `;
+  }
+
+  // ============================================================
+  // ADMIN CLIENTS
+  // ============================================================
+  var allClients = [];
+  var currentSortBy = 'revenue_desc';
+
+  async function loadAdminClients() {
+    if (!isAdmin) return;
+
+    const { data: allPays } = await supa
+      .from('payments')
+      .select('*')
+      .eq('status', 'validated');
+
+    const byClient = {};
+    (allPays || []).forEach(p => {
+      if (!byClient[p.user_id]) {
+        byClient[p.user_id] = {
+          user_id: p.user_id,
+          email: p.user_email,
+          revenue: 0,
+          count: 0,
+          lastPayment: p.created_at,
+          firstPayment: p.created_at,
+          configs: 0, audits: 0, captives: 0
+        };
+      }
+      const c = byClient[p.user_id];
+      c.revenue += p.amount || 0;
+      c.count++;
+      if (p.created_at > c.lastPayment) c.lastPayment = p.created_at;
+      if (p.created_at < c.firstPayment) c.firstPayment = p.created_at;
+      const t = p.payment_type || 'config';
+      if (t === 'config') c.configs++;
+      else if (t === 'audit') c.audits++;
+      else if (t === 'captive') c.captives++;
+    });
+
+    allClients = Object.values(byClient);
+    sortClients();
+  }
+
+  function setClientSort(by) {
+    document.getElementById('clientSortBy').value = by;
+    sortClients();
+  }
+
+  function sortClients() {
+    const by = document.getElementById('clientSortBy').value;
+    currentSortBy = by;
+    if (by === 'revenue_desc') allClients.sort((a, b) => b.revenue - a.revenue);
+    else if (by === 'revenue_asc') allClients.sort((a, b) => a.revenue - b.revenue);
+    else if (by === 'count_desc') allClients.sort((a, b) => b.count - a.count);
+    else if (by === 'recent') allClients.sort((a, b) => b.lastPayment.localeCompare(a.lastPayment));
+    else if (by === 'email') allClients.sort((a, b) => a.email.localeCompare(b.email));
+
+    // Marquer la colonne triée dans l'entête
+    document.querySelectorAll('.clients-table th').forEach(th => th.classList.remove('sorted'));
+    filterClients();
+  }
+
+  function filterClients() {
+    const q = document.getElementById('clientSearch').value.toLowerCase().trim();
+    const filtered = q ? allClients.filter(c => c.email.toLowerCase().includes(q)) : allClients;
+    const body = document.getElementById('clientsTableBody');
+
+    if (filtered.length === 0) {
+      body.innerHTML = `<tr><td colspan="4" class="clients-table-empty">${q ? 'Aucun client trouvé pour "' + escapeHtml(q) + '"' : 'Aucun client payant pour l\\'instant.'}</td></tr>`;
+      return;
+    }
+
+    body.innerHTML = filtered.map(c => {
+      const lastDate = new Date(c.lastPayment).toLocaleDateString('fr-FR');
+      const types = [];
+      if (c.configs > 0) types.push(c.configs + ' config');
+      if (c.audits > 0) types.push(c.audits + ' audit');
+      if (c.captives > 0) types.push(c.captives + ' captive');
+      return `<tr>
+        <td>
+          <div class="ct-email">${escapeHtml(c.email)}</div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--ink-faint);margin-top:2px;">${types.join(' · ')}</div>
+        </td>
+        <td class="ct-count" style="text-align:center;">${c.count}</td>
+        <td class="ct-revenue" style="text-align:right;">${c.revenue.toLocaleString('fr-FR')} F</td>
+        <td style="text-align:right;font-family:var(--mono);font-size:11px;color:var(--ink-dim);">${lastDate}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  function exportClientsCSV() {
+    if (allClients.length === 0) { alert('Aucun client à exporter.'); return; }
+    const headers = ['Email', 'Total paiements', 'CA Total (FCFA)', 'Configs', 'Audits', 'Captives', 'Premier paiement', 'Dernier paiement'];
+    const rows = allClients.map(c => [
+      c.email,
+      c.count,
+      c.revenue,
+      c.configs,
+      c.audits,
+      c.captives,
+      c.firstPayment.split('T')[0],
+      c.lastPayment.split('T')[0]
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sikhane-clients-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 </script>
 </body>
 </html>
