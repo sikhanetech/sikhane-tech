@@ -4052,7 +4052,6 @@ SIKHANE-TECH · sikhane-tech.com
           <div style="margin-bottom:12px;">Aucun routeur enregistré pour l'instant.</div>
           <button class="btn-primary" onclick="navTo('routers')" style="padding:10px 20px;">+ Ajouter mon premier routeur</button>
         </div>`;
-      // Mettre à jour le badge sidebar
       document.getElementById('navMonitoringOnline').style.display = 'none';
       return;
     }
@@ -4067,8 +4066,25 @@ SIKHANE-TECH · sikhane-tech.com
       badge.style.display = 'none';
     }
 
+    // Normaliser pour utiliser les noms internes
+    const normalized = data.map(r => ({
+      router_id: r.rid,
+      name: r.rname,
+      ip_address: r.ip_addr,
+      monitoring_enabled: r.mon_enabled,
+      last_heartbeat: r.last_heartbeat,
+      uptime_seconds: r.uptime_sec,
+      clients_connected: r.clients,
+      wan_rx_bytes: r.rx_bytes,
+      wan_tx_bytes: r.tx_bytes,
+      ram_used_percent: r.ram_pct,
+      cpu_load_percent: r.cpu_pct,
+      router_os_version: r.ros_ver,
+      is_online: r.is_online
+    }));
+
     // Render les cards
-    list.innerHTML = data.map(r => {
+    list.innerHTML = normalized.map(r => {
       if (!r.monitoring_enabled) {
         return renderMonCardInactive(r);
       }
