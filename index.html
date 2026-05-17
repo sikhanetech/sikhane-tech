@@ -1042,10 +1042,21 @@
       <section class="card" data-section="1">
         <div class="card-head">
           <div class="card-num">SECTION 01</div>
-          <div class="card-title">Identité du site</div>
-          <div class="card-desc">Identifie ton site WiFi Zone : un nom, un SSID, un identifiant.</div>
+          <div class="card-title">Identité du site & matériel</div>
+          <div class="card-desc">Identifie ton site WiFi Zone et choisis ton modèle Mikrotik pour adapter la config.</div>
         </div>
         <div class="card-body">
+          <div class="field">
+            <label>Modèle Mikrotik <span class="req">*</span></label>
+            <select id="routerModel" onchange="onModelChange()">
+              <option value="RB951">RB951Ui-2HnD — 5 ports + WiFi 2.4 GHz (le plus populaire)</option>
+              <option value="hAP_ac2">hAP ac² — 5 ports + WiFi dual band 2.4/5 GHz</option>
+              <option value="RB750Gr3">RB750Gr3 (hEX) — 5 ports Gigabit, sans WiFi</option>
+              <option value="L009">L009UiGS-RM — 8 ports Gigabit, sans WiFi (head-end pro)</option>
+              <option value="CCR1009">CCR1009-7G-1C-1S+ — 8 ports + SFP, sans WiFi (haut débit)</option>
+            </select>
+            <div id="modelInfo" style="margin-top:8px;padding:10px 12px;background:rgba(74,158,255,0.08);border:1px solid rgba(74,158,255,0.25);border-radius:2px;font-size:11px;color:var(--ink-dim);line-height:1.5;"></div>
+          </div>
           <div class="field"><label>Nom du site <span class="req">*</span></label><input type="text" id="siteName" placeholder="ex: Mermoz Digital Zone" /></div>
           <div class="row">
             <div class="field"><label>SSID WiFi</label><input type="text" id="ssid" placeholder="ex: Mermoz Digital Zone" /></div>
@@ -2078,14 +2089,85 @@
     return m[1] + (m[2]==='w'?'w':m[2]);
   }
 
+  // === SPÉCIFICATIONS DES MODÈLES MIKROTIK ===
+  var MODEL_SPECS = {
+    'RB951': {
+      name: 'RB951Ui-2HnD',
+      ports: 5,
+      wanPort: 'ether1',
+      lanPorts: ['ether2', 'ether3', 'ether4', 'ether5'],
+      hasWifi: true,
+      wifiInterfaces: ['wlan1'],
+      wifiBand: '2ghz-g/n',
+      cpu: 'MIPSBE 600MHz',
+      info: '5 ports + WiFi 2.4 GHz intégré. Idéal pour petit WiFi Zone (~50 clients simultanés).'
+    },
+    'hAP_ac2': {
+      name: 'hAP ac²',
+      ports: 5,
+      wanPort: 'ether1',
+      lanPorts: ['ether2', 'ether3', 'ether4', 'ether5'],
+      hasWifi: true,
+      wifiInterfaces: ['wlan1', 'wlan2'],
+      wifiBand: '2ghz-g/n',
+      wifiBand2: '5ghz-a/n/ac',
+      cpu: 'ARM 716MHz',
+      info: '5 ports Gigabit + WiFi dual band (2.4 GHz + 5 GHz). Excellent pour WiFi Zone moyen (~100 clients).'
+    },
+    'RB750Gr3': {
+      name: 'RB750Gr3 (hEX)',
+      ports: 5,
+      wanPort: 'ether1',
+      lanPorts: ['ether2', 'ether3', 'ether4', 'ether5'],
+      hasWifi: false,
+      wifiInterfaces: [],
+      cpu: 'MMIPS 880MHz',
+      info: '5 ports Gigabit, SANS WiFi intégré. Tu devras connecter des AP WiFi externes (cap ac, hAP, etc.) sur les ports LAN.'
+    },
+    'L009': {
+      name: 'L009UiGS-RM',
+      ports: 8,
+      wanPort: 'ether1',
+      lanPorts: ['ether2', 'ether3', 'ether4', 'ether5', 'ether6', 'ether7', 'ether8'],
+      hasWifi: false,
+      wifiInterfaces: [],
+      cpu: 'ARM64 800MHz 4 cœurs',
+      info: '8 ports Gigabit (1× 2.5G + 7× 1G), SANS WiFi. Head-end pro pour grosses installations (~300+ clients). Nécessite des AP WiFi externes.'
+    },
+    'CCR1009': {
+      name: 'CCR1009-7G-1C-1S+',
+      ports: 8,
+      wanPort: 'ether1',
+      lanPorts: ['ether2', 'ether3', 'ether4', 'ether5', 'ether6', 'ether7'],
+      hasWifi: false,
+      wifiInterfaces: [],
+      cpu: 'Tilera 9 cœurs',
+      info: '7 ports Gigabit + 1 SFP+ 10G, sans WiFi. Routeur haut débit pour gros WiFi Zone (~500+ clients) avec uplink fibre.'
+    }
+  };
+
+  function onModelChange() {
+    const m = document.getElementById('routerModel').value;
+    const spec = MODEL_SPECS[m];
+    if (!spec) return;
+    document.getElementById('modelInfo').innerHTML =
+      `<strong style="color:var(--blue);">${spec.name}</strong> · ${spec.cpu}<br>` +
+      `<span style="color:var(--ink-faint);">${spec.info}</span>`;
+  }
+
+  // Initialiser l'info modèle au chargement
+  setTimeout(() => { if (document.getElementById('routerModel')) onModelChange(); }, 200);
+
   async function generate() {
+    const model = document.getElementById('routerModel').value;
+    const spec = MODEL_SPECS[model];
     const siteName = (document.getElementById('siteName').value || 'WiFi Zone').trim();
     const ssid = (document.getElementById('ssid').value || siteName).trim();
     const siteId = (document.getElementById('siteId').value || 'STE-01').trim();
     const adminPass = document.getElementById('adminPass').value || 'ChangeMe2026!';
     const dnsName = document.getElementById('dnsName').value || 'hotspot.local';
     const netCidr = document.getElementById('netSize').value;
-    const wanIface = document.getElementById('wanIface').value;
+    const wanIface = spec.wanPort; // Toujours ether1 (schéma classique)
     const dns = document.getElementById('dns').value;
     const wanBw = document.getElementById('wanBw').value;
     const ttl = document.getElementById('t-ttl').dataset.on === 'true';
@@ -2103,18 +2185,46 @@
     let r = '';
     r += `# ============================================================\n`;
     r += `# SIKHANE-TECH — Configuration RouterOS\n`;
+    r += `# Modèle    : ${spec.name}\n`;
     r += `# Site      : ${siteName}\n`;
     r += `# ID        : ${siteId}\n`;
+    r += `# Ports     : ${spec.ports} (WAN: ${spec.wanPort}, LAN: ${spec.lanPorts.join(', ')})\n`;
+    r += `# WiFi      : ${spec.hasWifi ? 'Intégré (' + spec.wifiInterfaces.join(', ') + ')' : 'AUCUN — AP externes requis'}\n`;
     r += `# Généré le : ${new Date().toISOString()}\n`;
     r += `# ============================================================\n\n`;
+
     r += `/system identity set name="${siteId}"\n`;
     r += `/user set admin password="${adminPass}"\n\n`;
+
+    // === BRIDGE ===
     r += `/interface bridge\nadd name=bridge-local protocol-mode=none\n\n`;
-    r += `/interface wireless\nset [ find default-name=wlan1 ] band=2ghz-g/n disabled=no mode=ap-bridge ssid="${ssid}"\n`;
-    r += `/interface wireless security-profiles\nset [ find default=yes ] supplicant-identity=MikroTik\n\n`;
+
+    // === WIFI (si modèle compatible) ===
+    if (spec.hasWifi) {
+      r += `# --- Configuration WiFi ---\n`;
+      r += `/interface wireless\n`;
+      r += `set [ find default-name=wlan1 ] band=${spec.wifiBand} disabled=no mode=ap-bridge ssid="${ssid}"\n`;
+
+      // 2e radio pour dual band (hAP ac²)
+      if (spec.wifiInterfaces.length > 1 && spec.wifiBand2) {
+        r += `set [ find default-name=wlan2 ] band=${spec.wifiBand2} disabled=no mode=ap-bridge ssid="${ssid}"\n`;
+      }
+
+      r += `/interface wireless security-profiles\nset [ find default=yes ] supplicant-identity=MikroTik\n\n`;
+    } else {
+      r += `# --- Pas de WiFi intégré sur ce modèle ---\n`;
+      r += `# Connecte tes AP WiFi externes sur les ports LAN (ether2 à ether${spec.ports})\n`;
+      r += `# Les AP recevront leur IP via le DHCP du hotspot et seront pontés.\n\n`;
+    }
+
+    // === HOTSPOT PROFILE ===
     r += `/ip hotspot profile\nadd dns-name=${dnsName} hotspot-address=${gw} html-directory=hotspot login-by=cookie,http-chap,https,http-pap,mac-cookie name=hsprof1\n\n`;
+
+    // === IP POOL & DHCP ===
     r += `/ip pool\nadd name=pool-hotspot ranges=${poolStart}-${poolEnd}\n`;
     r += `/ip dhcp-server\nadd address-pool=pool-hotspot interface=bridge-local name=dhcp-hotspot\n\n`;
+
+    // === USER PROFILES (avec script Mikhmon on-login) ===
     r += `/ip hotspot user profile\nadd name=admin shared-users=unlimited\n`;
     profiles.forEach(p => {
       const safeName = p.name.replace(/[^a-zA-Z0-9]/g,'_').toUpperCase();
@@ -2127,15 +2237,30 @@
         r += `add name=${safeName} address-pool=pool-hotspot rate-limit=${p.rate} session-timeout=${sessTo} shared-users=1\n`;
       }
     });
+
+    // === BRIDGE PORTS (adapté selon le modèle) ===
     r += `\n/interface bridge port\n`;
     if (bridgeAll) {
-      r += `add bridge=bridge-local interface=ether2\nadd bridge=bridge-local interface=ether3\nadd bridge=bridge-local interface=ether4\nadd bridge=bridge-local interface=ether5\n`;
+      r += `# Bridge tous les ports LAN (ether2 à ether${spec.ports})\n`;
+      spec.lanPorts.forEach(p => {
+        r += `add bridge=bridge-local interface=${p}\n`;
+      });
     }
-    r += `add bridge=bridge-local interface=wlan1\n\n`;
+    // WiFi seulement si modèle compatible
+    if (spec.hasWifi) {
+      spec.wifiInterfaces.forEach(w => {
+        r += `add bridge=bridge-local interface=${w}\n`;
+      });
+    }
+    r += `\n`;
+
+    // === IP & ROUTING ===
     r += `/ip address\nadd address=${gw}/${mask} interface=bridge-local network=${netIp}\n`;
     r += `/ip dhcp-client\nadd comment="WAN" interface=${wanIface} disabled=no\n`;
     r += `/ip dhcp-server network\nadd address=${netCidr} dns-server=${gw} gateway=${gw}\n`;
     r += `/ip dns\nset allow-remote-requests=yes servers=${gw},${dns.split(',')[0]}\n\n`;
+
+    // === FIREWALL ===
     r += `/ip firewall filter\n`;
     r += `add action=accept chain=SIKHANE-input comment=SIKHANE-rule-icmp protocol=icmp\n`;
     r += `add action=accept chain=SIKHANE-input comment=SIKHANE-rule-estab-in connection-state=established,related\n`;
@@ -2144,21 +2269,42 @@
     r += `add action=return chain=SIKHANE-forward comment=SIKHANE-rule-return-fwd\n`;
     r += `add action=jump chain=input comment=SIKHANE-jump-input jump-target=SIKHANE-input\n`;
     r += `add action=jump chain=forward comment=SIKHANE-jump-forward jump-target=SIKHANE-forward\n\n`;
+
+    // === ANTI-PARTAGE TTL ===
     if (ttl) {
       r += `/ip firewall mangle\nadd action=change-ttl chain=postrouting comment="Anti-partage TTL" hotspot=auth new-ttl=set:1 out-interface=bridge-local passthrough=no\n\n`;
     }
+
+    // === NAT ===
     r += `/ip firewall nat\nadd action=masquerade chain=srcnat comment="Hotspot masquerade" out-interface=${wanIface} src-address=${netCidr}\n\n`;
+
+    // === HOTSPOT ===
     r += `/ip hotspot\nadd address-pool=pool-hotspot addresses-per-mac=1 disabled=no interface=bridge-local name=hotspot1 profile=hsprof1\n`;
     r += `/ip hotspot user\nadd name=admin\n\n`;
-    r += `# FIN — ${siteName} (${siteId})\n`;
+
+    // === NOTES SPÉCIFIQUES AU MODÈLE ===
+    if (!spec.hasWifi) {
+      r += `# ============================================================\n`;
+      r += `# IMPORTANT pour ${spec.name} :\n`;
+      r += `# Ce modèle n'a PAS de WiFi intégré.\n`;
+      r += `# Connecte tes AP WiFi (cap ac, hAP, RB951, etc.) sur les ports\n`;
+      r += `# LAN (ether2 à ether${spec.ports}). Les AP doivent être configurés en :\n`;
+      r += `# - Mode bridge (pas routeur)\n`;
+      r += `# - SSID "${ssid}"\n`;
+      r += `# - Sans serveur DHCP propre\n`;
+      r += `# Le DHCP du hotspot leur attribuera les IPs automatiquement.\n`;
+      r += `# ============================================================\n\n`;
+    }
+
+    r += `# FIN — ${siteName} (${siteId}) sur ${spec.name}\n`;
 
     const colored = r.replace(/^(#.*)$/gm, '<span class="c-com">$1</span>').replace(/(\/[a-z][a-z\- ]+)(?= )/g, '<span class="c-cmd">$1</span>').replace(/"([^"]+)"/g, '<span class="c-str">"$1"</span>');
-    const meta = `<div><span>Site</span><span>${siteName} · ${siteId}</span></div><div><span>SSID</span><span>${ssid}</span></div><div><span>Réseau</span><span>${netCidr} · gw ${gw}</span></div><div><span>Profils</span><span>${profiles.length} tickets</span></div><div><span>Lignes</span><span>${r.split('\n').length}</span></div>`;
+    const meta = `<div><span>Modèle</span><span>${spec.name}</span></div><div><span>Site</span><span>${siteName} · ${siteId}</span></div><div><span>SSID</span><span>${ssid}</span></div><div><span>Réseau</span><span>${netCidr} · gw ${gw}</span></div><div><span>Profils</span><span>${profiles.length} tickets</span></div><div><span>Lignes</span><span>${r.split('\n').length}</span></div>`;
 
     document.getElementById('configMeta').innerHTML = meta;
     document.getElementById('codeOut').innerHTML = colored;
     document.getElementById('codeOut').dataset.raw = r;
-    document.getElementById('outTitle').textContent = `${siteId}.rsc`;
+    document.getElementById('outTitle').textContent = `${siteId}-${model}.rsc`;
 
     // ===== LOGIQUE PAIEMENT =====
     if (currentUser) {
