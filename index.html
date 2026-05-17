@@ -557,6 +557,50 @@
   .rep-card .rep-count { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); margin-top: 4px; }
   .rep-card .rep-share { font-family: var(--mono); font-size: 10px; color: var(--green); margin-top: 4px; letter-spacing: 0.05em; }
 
+  /* ===== ATELIER HOME (OpTiNet-style) ===== */
+  .atelier-home { display: none; }
+  .atelier-home.active { display: block; animation: fadeIn 0.3s; }
+  .atelier-tools-section { margin-bottom: 32px; }
+  .atelier-tools-eyebrow { font-family: var(--mono); font-size: 10px; color: var(--ink-dim); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 14px; }
+
+  .atelier-main-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 36px; }
+  @media (max-width: 900px) { .atelier-main-grid { grid-template-columns: 1fr; } }
+
+  .atelier-main-card { background: var(--panel); border: 1px solid var(--line); padding: 22px; border-radius: 4px; cursor: pointer; transition: 0.2s; display: flex; align-items: flex-start; gap: 16px; text-align: left; width: 100%; position: relative; overflow: hidden; }
+  .atelier-main-card:hover { transform: translateY(-2px); border-color: var(--line-2); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  .atelier-main-card::after { content: '›'; position: absolute; top: 22px; right: 20px; font-size: 22px; color: var(--ink-faint); transition: 0.2s; }
+  .atelier-main-card:hover::after { color: var(--green); transform: translateX(3px); }
+
+  .amc-icon { width: 48px; height: 48px; min-width: 48px; border-radius: 12px; display: grid; place-items: center; flex-shrink: 0; }
+  .amc-icon svg { width: 22px; height: 22px; }
+  .amc-icon.green { background: rgba(70,217,124,0.12); border: 1px solid var(--green-dim); color: var(--green); }
+  .amc-icon.blue { background: rgba(74,158,255,0.12); border: 1px solid rgba(74,158,255,0.3); color: var(--blue); }
+  .amc-icon.purple { background: rgba(167,90,230,0.12); border: 1px solid rgba(167,90,230,0.3); color: #a75ae6; }
+
+  .amc-text { flex: 1; padding-right: 24px; }
+  .amc-title { font-family: var(--serif); font-size: 17px; font-weight: 700; line-height: 1.2; margin-bottom: 6px; letter-spacing: -0.01em; }
+  .amc-desc { font-size: 12px; color: var(--ink-dim); line-height: 1.5; }
+  .amc-badge { display: inline-block; margin-top: 8px; background: rgba(245,197,66,0.12); color: var(--yellow); border: 1px solid rgba(245,197,66,0.3); padding: 3px 8px; border-radius: 2px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* Petits outils en bas */
+  .atelier-tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 700px) { .atelier-tools-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 400px) { .atelier-tools-grid { grid-template-columns: 1fr; } }
+
+  .atelier-tool-card { background: var(--panel-2); border: 1px solid var(--line); padding: 14px 16px; border-radius: 3px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 12px; text-align: left; width: 100%; }
+  .atelier-tool-card:hover { background: var(--panel); border-color: var(--line-2); transform: translateY(-1px); }
+  .atc-icon { width: 32px; height: 32px; min-width: 32px; border-radius: 8px; display: grid; place-items: center; flex-shrink: 0; }
+  .atc-icon svg { width: 16px; height: 16px; }
+  .atc-icon.purple { background: rgba(167,90,230,0.12); color: #a75ae6; }
+  .atc-icon.green { background: rgba(70,217,124,0.12); color: var(--green); }
+  .atc-icon.blue { background: rgba(74,158,255,0.12); color: var(--blue); }
+  .atc-icon.yellow { background: rgba(245,197,66,0.12); color: var(--yellow); }
+  .atc-name { font-family: var(--serif); font-size: 13px; font-weight: 600; line-height: 1.2; }
+
+  /* Bouton retour */
+  .back-to-atelier { background: transparent; border: 1px solid var(--line-2); color: var(--ink-dim); padding: 8px 14px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 2px; margin-bottom: 18px; display: inline-flex; align-items: center; gap: 6px; }
+  .back-to-atelier:hover { color: var(--green); border-color: var(--green); }
+
   /* MISC */
   .flag-sn { display: inline-block; width: 14px; height: 9px; background: linear-gradient(90deg, #00853f 33%, #fdef42 33% 66%, #e31b23 66%); vertical-align: middle; }
 </style>
@@ -911,23 +955,112 @@
       <div class="page-head">
         <div class="page-eyebrow">Atelier de configuration</div>
         <h1 class="page-title">Atelier <em>SIKHANE-TECH</em></h1>
-        <p class="page-lede">Génère une nouvelle config RouterOS, ou audite une config existante pour détecter les failles de sécurité et les optimisations possibles.</p>
+        <p class="page-lede" id="atelierLede">Tous les outils pour configurer tes Mikrotik WiFi Zone, gérer ton parc et personnaliser tes pages.</p>
       </div>
 
-      <!-- Onglets atelier -->
-      <div class="atelier-tabs">
-        <button class="atelier-tab active" data-atab="generator" onclick="atelierTab('generator')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          Générateur
-        </button>
-        <button class="atelier-tab" data-atab="verifier" onclick="atelierTab('verifier')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c2.4 0 4.59.94 6.21 2.47"/></svg>
-          Vérificateur IA
-        </button>
+      <!-- ========== HOME DE L'ATELIER (OpTiNet-style) ========== -->
+      <div class="atelier-home active" id="atelierHome">
+
+        <div class="atelier-tools-section">
+          <div class="atelier-tools-eyebrow">— Outils principaux</div>
+          <div class="atelier-main-grid">
+
+            <!-- Card 1 : Générateur -->
+            <button class="atelier-main-card" onclick="openAtelierTool('generator')">
+              <div class="amc-icon green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+              </div>
+              <div class="amc-text">
+                <div class="amc-title">Générateur de configuration</div>
+                <div class="amc-desc">Crée une config RouterOS complète : hotspot Mikhmon, anti-partage TTL, auto-heal.</div>
+                <div class="amc-badge">10 000 FCFA · 1 gratuit/mois</div>
+              </div>
+            </button>
+
+            <!-- Card 2 : Vérificateur IA -->
+            <button class="atelier-main-card" onclick="openAtelierTool('verifier')">
+              <div class="amc-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 12l2 2 4-4"/>
+                  <path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c2.4 0 4.59.94 6.21 2.47"/>
+                </svg>
+              </div>
+              <div class="amc-text">
+                <div class="amc-title">Vérificateur IA</div>
+                <div class="amc-desc">Audite une config existante en 12 points : sécurité, walled garden, optimisations.</div>
+                <div class="amc-badge">3 000 FCFA · 1 gratuit/mois</div>
+              </div>
+            </button>
+
+            <!-- Card 3 : Page Captive -->
+            <button class="atelier-main-card" onclick="navTo('captive')">
+              <div class="amc-icon purple">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="3" width="20" height="14" rx="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+              </div>
+              <div class="amc-text">
+                <div class="amc-title">Page Captive personnalisée</div>
+                <div class="amc-desc">Personnalise ta page de connexion : logo, couleurs, textes, grille de tarifs.</div>
+                <div class="amc-badge">3 000 FCFA · 1 gratuite/mois</div>
+              </div>
+            </button>
+
+          </div>
+        </div>
+
+        <div class="atelier-tools-section">
+          <div class="atelier-tools-eyebrow">— Outils disponibles</div>
+          <div class="atelier-tools-grid">
+
+            <button class="atelier-tool-card" onclick="navTo('mikhmon')">
+              <div class="atc-icon yellow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11H3v10h6V11z"/><path d="M21 3h-6v18h6V3z"/><path d="M15 7H9v14h6V7z"/></svg>
+              </div>
+              <div class="atc-name">Mikhmon (tickets)</div>
+            </button>
+
+            <button class="atelier-tool-card" onclick="navTo('routers')">
+              <div class="atc-icon blue">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="18" x2="6.01" y2="18"/><line x1="10" y1="18" x2="10.01" y2="18"/><path d="M22 8H2"/><path d="M5 8V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4"/></svg>
+              </div>
+              <div class="atc-name">Mes Routeurs</div>
+            </button>
+
+            <button class="atelier-tool-card" onclick="navTo('referral')">
+              <div class="atc-icon green">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+              </div>
+              <div class="atc-name">Parrainage</div>
+            </button>
+
+          </div>
+        </div>
+
       </div>
 
-      <!-- TAB : GENERATEUR -->
-      <div class="atelier-content active" id="atab-generator">
+      <!-- ========== OUTIL OUVERT (caché par défaut) ========== -->
+      <div id="atelierToolWrap" style="display:none;">
+        <button class="back-to-atelier" onclick="closeAtelierTool()">← Retour à l'atelier</button>
+
+        <!-- Onglets atelier -->
+        <div class="atelier-tabs">
+          <button class="atelier-tab active" data-atab="generator" onclick="atelierTab('generator')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Générateur
+          </button>
+          <button class="atelier-tab" data-atab="verifier" onclick="atelierTab('verifier')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9c2.4 0 4.59.94 6.21 2.47"/></svg>
+            Vérificateur IA
+          </button>
+        </div>
+
+        <!-- TAB : GENERATEUR -->
+        <div class="atelier-content active" id="atab-generator">
 
       <!-- SECTION 1 : SITE -->
       <section class="card" data-section="1">
@@ -1069,6 +1202,7 @@
         </div>
 
       </div>
+      </div><!-- /atelierToolWrap -->
     </div>
 
     <!-- ========== PAGE: ROUTERS ========== -->
@@ -1849,6 +1983,17 @@
     document.getElementById('mobileTitle').textContent = titles[page] || '';
     closeSidebar();
     if (page === 'dashboard') loadDashboard();
+    if (page === 'atelier') {
+      // Toujours revenir sur la home de l'atelier
+      const home = document.getElementById('atelierHome');
+      const wrap = document.getElementById('atelierToolWrap');
+      const lede = document.getElementById('atelierLede');
+      if (home && wrap) {
+        home.classList.add('active');
+        wrap.style.display = 'none';
+        if (lede) lede.textContent = 'Tous les outils pour configurer tes Mikrotik WiFi Zone, gérer ton parc et personnaliser tes pages.';
+      }
+    }
     if (page === 'routers') loadRouters();
     if (page === 'mikhmon') loadMikhmonChips();
     if (page === 'captive') { renderCaptTariffs(); updateCaptivePreview(); }
@@ -2449,6 +2594,26 @@
   function atelierTab(name) {
     document.querySelectorAll('.atelier-tab').forEach(t => t.classList.toggle('active', t.dataset.atab === name));
     document.querySelectorAll('.atelier-content').forEach(c => c.classList.toggle('active', c.id === 'atab-' + name));
+  }
+
+  // ===== ATELIER HOME (OpTiNet style) =====
+  function openAtelierTool(tool) {
+    // Cache la home, montre le wrapper outil
+    document.getElementById('atelierHome').classList.remove('active');
+    document.getElementById('atelierToolWrap').style.display = 'block';
+    document.getElementById('atelierLede').textContent = tool === 'verifier'
+      ? 'Audite une config existante pour détecter les failles de sécurité et les optimisations possibles.'
+      : 'Génère une nouvelle config RouterOS avec hotspot Mikhmon, anti-partage TTL, auto-heal.';
+    atelierTab(tool);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function closeAtelierTool() {
+    // Cache wrapper outil, montre la home
+    document.getElementById('atelierToolWrap').style.display = 'none';
+    document.getElementById('atelierHome').classList.add('active');
+    document.getElementById('atelierLede').textContent = 'Tous les outils pour configurer tes Mikrotik WiFi Zone, gérer ton parc et personnaliser tes pages.';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   // ===== VÉRIFICATEUR DE CONFIG =====
