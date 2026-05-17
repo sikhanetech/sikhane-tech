@@ -605,6 +605,54 @@
   .back-to-atelier { background: transparent; border: 1px solid var(--line-2); color: var(--ink-dim); padding: 8px 14px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; border-radius: 2px; margin-bottom: 18px; display: inline-flex; align-items: center; gap: 6px; }
   .back-to-atelier:hover { color: var(--green); border-color: var(--green); }
 
+  /* ===== MONITORING ===== */
+  .mon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-bottom: 16px; }
+  .mon-card { background: var(--panel); border: 1px solid var(--line); padding: 18px; border-radius: 3px; position: relative; transition: 0.2s; }
+  .mon-card.online { border-left: 3px solid var(--green); }
+  .mon-card.offline { border-left: 3px solid var(--red); opacity: 0.85; }
+  .mon-card.inactive { border-left: 3px solid var(--line-2); opacity: 0.7; }
+
+  .mon-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; gap: 10px; }
+  .mon-name { font-family: var(--serif); font-size: 17px; font-weight: 700; line-height: 1.2; }
+  .mon-name-sub { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); margin-top: 4px; letter-spacing: 0.1em; }
+  .mon-status { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 10px; padding: 4px 8px; border-radius: 2px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
+  .mon-status.online { background: rgba(70,217,124,0.12); color: var(--green); border: 1px solid var(--green-dim); }
+  .mon-status.offline { background: rgba(232,83,63,0.12); color: var(--red); border: 1px solid rgba(232,83,63,0.3); }
+  .mon-status.inactive { background: var(--bg); color: var(--ink-faint); border: 1px solid var(--line-2); }
+  .mon-status .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .mon-status.online .dot { animation: pulse 2s infinite; }
+
+  .mon-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .mon-stat { background: var(--bg); padding: 10px 12px; border-radius: 2px; }
+  .mon-stat-label { font-family: var(--mono); font-size: 9px; color: var(--ink-dim); letter-spacing: 0.12em; text-transform: uppercase; }
+  .mon-stat-value { font-family: var(--serif); font-size: 19px; font-weight: 700; margin-top: 4px; line-height: 1; }
+  .mon-stat-value .unit { font-size: 11px; color: var(--ink-dim); font-weight: 400; margin-left: 3px; }
+
+  .mon-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 10px; color: var(--ink-faint); letter-spacing: 0.05em; }
+  .mon-meta span { display: flex; align-items: center; gap: 4px; }
+
+  .mon-actions { margin-top: 14px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .mon-btn { font-family: var(--mono); font-size: 10px; padding: 7px 12px; border-radius: 2px; cursor: pointer; letter-spacing: 0.1em; text-transform: uppercase; border: 1px solid var(--line-2); background: transparent; color: var(--ink); transition: 0.2s; }
+  .mon-btn:hover { border-color: var(--green); color: var(--green); }
+  .mon-btn.primary { background: var(--green); color: #001008; border-color: var(--green); font-weight: 700; }
+  .mon-btn.primary:hover { background: #58e88c; color: #001008; }
+
+  .mon-empty { text-align: center; padding: 60px 20px; color: var(--ink-faint); }
+  .mon-empty svg { margin-bottom: 16px; opacity: 0.4; }
+
+  .mon-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 10px; flex-wrap: wrap; }
+  .mon-toolbar-info { font-family: var(--mono); font-size: 10px; color: var(--ink-dim); letter-spacing: 0.1em; }
+  .mon-toolbar-info .live { color: var(--green); font-weight: 700; }
+  .mon-toolbar-info .live::before { content: '●'; margin-right: 4px; animation: pulse 1.5s infinite; }
+
+  /* Modal install script */
+  .install-script-box { background: var(--bg); border: 1px solid var(--line-2); border-radius: 2px; padding: 14px; font-family: var(--mono); font-size: 11px; line-height: 1.6; color: var(--ink); white-space: pre-wrap; word-break: break-all; max-height: 280px; overflow-y: auto; margin: 12px 0; }
+  .install-step { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .install-step:last-child { border-bottom: none; }
+  .install-step-num { width: 22px; height: 22px; min-width: 22px; border-radius: 50%; background: var(--green); color: #001008; display: grid; place-items: center; font-family: var(--mono); font-size: 11px; font-weight: 800; }
+  .install-step-txt { font-size: 12px; line-height: 1.45; color: var(--ink); }
+  .install-step-txt code { background: var(--bg); padding: 1px 6px; border-radius: 2px; color: var(--green); font-family: var(--mono); font-size: 11px; }
+
   /* MISC */
   .flag-sn { display: inline-block; width: 14px; height: 9px; background: linear-gradient(90deg, #00853f 33%, #fdef42 33% 66%, #e31b23 66%); vertical-align: middle; }
 </style>
@@ -858,6 +906,11 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="18" x2="6.01" y2="18"/><line x1="10" y1="18" x2="10.01" y2="18"/><path d="M22 8H2"/><path d="M5 8V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4"/></svg>
         Mes Routeurs
         <span class="badge-num" id="navRoutersCount" style="display:none;">0</span>
+      </div>
+      <div class="sb-link" data-page="monitoring" onclick="navTo('monitoring')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        Monitoring
+        <span class="badge-num" id="navMonitoringOnline" style="display:none;background:var(--green);color:#001008;">0</span>
       </div>
       <div class="sb-link" data-page="mikhmon" onclick="navTo('mikhmon')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11H3v10h6V11z"/><path d="M21 3h-6v18h6V3z"/><path d="M15 7H9v14h6V7z"/></svg>
@@ -1203,6 +1256,29 @@
       <button class="btn-primary" style="margin-bottom:20px;" onclick="openRouterForm()">+ Ajouter un routeur</button>
 
       <div id="routersList"></div>
+    </div>
+
+    <!-- ========== PAGE: MONITORING ========== -->
+    <div class="page" id="page-monitoring">
+      <div class="page-head">
+        <div class="page-eyebrow">📡 Temps réel</div>
+        <h1 class="page-title">Monitoring <em>des bornes</em></h1>
+        <p class="page-lede">Surveille tes Mikrotik en direct : clients connectés, bande passante, RAM, uptime. <strong>1 mois gratuit</strong> par borne, puis 2 000 FCFA/mois.</p>
+      </div>
+
+      <div class="mon-toolbar">
+        <div class="mon-toolbar-info">
+          <span class="live">EN DIRECT</span> · Rafraîchit toutes les 30s · Dernière maj : <span id="monLastRefresh">—</span>
+        </div>
+        <button class="btn-sec" onclick="loadMonitoring()" style="padding:8px 14px;">🔄 Rafraîchir</button>
+      </div>
+
+      <div id="monitoringList" class="mon-grid">
+        <div class="mon-empty">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <div>Chargement du monitoring...</div>
+        </div>
+      </div>
     </div>
 
     <!-- ========== PAGE: MIKHMON ========== -->
@@ -1966,12 +2042,18 @@
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + page).classList.add('active');
     document.querySelectorAll('.sb-link').forEach(l => l.classList.toggle('active', l.dataset.page === page));
-    const titles = { dashboard:'Dashboard', atelier:'Atelier', routers:'Mes Routeurs', mikhmon:'Mikhmon', captive:'Page Captive', referral:'Parrainage', history:'Historique', profile:'Profil', admin:'Admin' };
+    const titles = { dashboard:'Dashboard', atelier:'Atelier', routers:'Mes Routeurs', monitoring:'Monitoring', mikhmon:'Mikhmon', captive:'Page Captive', referral:'Parrainage', history:'Historique', profile:'Profil', admin:'Admin' };
     document.getElementById('mobileTitle').textContent = titles[page] || '';
     closeSidebar();
+
+    // Arrêter le refresh monitoring si on quitte la page
+    if (page !== 'monitoring' && monRefreshTimer) {
+      clearInterval(monRefreshTimer);
+      monRefreshTimer = null;
+    }
+
     if (page === 'dashboard') loadDashboard();
     if (page === 'atelier') {
-      // Toujours revenir sur la home de l'atelier
       const home = document.getElementById('atelierHome');
       const wrap = document.getElementById('atelierToolWrap');
       const lede = document.getElementById('atelierLede');
@@ -1982,6 +2064,11 @@
       }
     }
     if (page === 'routers') loadRouters();
+    if (page === 'monitoring') {
+      loadMonitoring();
+      // Auto-refresh toutes les 30 sec
+      monRefreshTimer = setInterval(loadMonitoring, 30000);
+    }
     if (page === 'mikhmon') loadMikhmonChips();
     if (page === 'captive') { renderCaptTariffs(); updateCaptivePreview(); }
     if (page === 'referral') loadReferral();
@@ -3933,6 +4020,334 @@ SIKHANE-TECH · sikhane-tech.com
     a.click();
     URL.revokeObjectURL(url);
   }
+
+  // ============================================================
+  // MONITORING TEMPS RÉEL
+  // ============================================================
+  var monRefreshTimer = null;
+  var currentMonRouter = null;
+  var currentMonScript = '';
+
+  async function loadMonitoring() {
+    if (!currentUser) return;
+
+    // Récupérer le statut de tous les routeurs
+    const { data, error } = await supa.rpc('get_routers_status', { p_user_id: currentUser.id });
+
+    if (error) {
+      console.error('loadMonitoring:', error);
+      document.getElementById('monitoringList').innerHTML =
+        `<div class="mon-empty"><div style="color:var(--red);">Erreur : ${escapeHtml(error.message)}</div></div>`;
+      return;
+    }
+
+    const list = document.getElementById('monitoringList');
+    const now = new Date();
+    document.getElementById('monLastRefresh').textContent = now.toLocaleTimeString('fr-FR');
+
+    if (!data || data.length === 0) {
+      list.innerHTML = `
+        <div class="mon-empty">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="18" x2="6.01" y2="18"/><path d="M22 8H2"/><path d="M5 8V4a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4"/></svg>
+          <div style="margin-bottom:12px;">Aucun routeur enregistré pour l'instant.</div>
+          <button class="btn-primary" onclick="navTo('routers')" style="padding:10px 20px;">+ Ajouter mon premier routeur</button>
+        </div>`;
+      // Mettre à jour le badge sidebar
+      document.getElementById('navMonitoringOnline').style.display = 'none';
+      return;
+    }
+
+    // Compter les bornes en ligne
+    const onlineCount = data.filter(r => r.is_online).length;
+    const badge = document.getElementById('navMonitoringOnline');
+    if (onlineCount > 0) {
+      badge.textContent = onlineCount;
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
+    }
+
+    // Render les cards
+    list.innerHTML = data.map(r => {
+      if (!r.monitoring_enabled) {
+        return renderMonCardInactive(r);
+      }
+      const lastSeen = r.last_heartbeat ? new Date(r.last_heartbeat) : null;
+      const minutesAgo = lastSeen ? Math.floor((now - lastSeen) / 60000) : null;
+
+      if (r.is_online) {
+        return renderMonCardOnline(r, minutesAgo);
+      } else {
+        return renderMonCardOffline(r, minutesAgo);
+      }
+    }).join('');
+  }
+
+  function renderMonCardInactive(r) {
+    return `
+      <div class="mon-card inactive">
+        <div class="mon-header">
+          <div>
+            <div class="mon-name">${escapeHtml(r.name)}</div>
+            <div class="mon-name-sub">${escapeHtml(r.ip_address || '—')}</div>
+          </div>
+          <div class="mon-status inactive"><span class="dot"></span>Inactif</div>
+        </div>
+        <div style="padding:10px 0;color:var(--ink-dim);font-size:12px;line-height:1.5;">
+          Le monitoring n'est pas encore activé sur cette borne. Active-le pour voir ses stats temps réel.
+        </div>
+        <div class="mon-actions">
+          <button class="mon-btn primary" onclick="openMonitoringModal('${r.router_id}', '${escapeAttr(r.name)}')" style="flex:1;">
+            ⚡ Activer le monitoring (1 mois gratuit)
+          </button>
+        </div>
+      </div>`;
+  }
+
+  function renderMonCardOnline(r, minutesAgo) {
+    const uptimeStr = formatUptime(r.uptime_seconds);
+    const bwTotal = formatBytes((r.wan_rx_bytes || 0) + (r.wan_tx_bytes || 0));
+    return `
+      <div class="mon-card online">
+        <div class="mon-header">
+          <div>
+            <div class="mon-name">${escapeHtml(r.name)}</div>
+            <div class="mon-name-sub">${escapeHtml(r.ip_address || '—')} · RouterOS ${escapeHtml(r.router_os_version || '?')}</div>
+          </div>
+          <div class="mon-status online"><span class="dot"></span>En ligne</div>
+        </div>
+        <div class="mon-stats">
+          <div class="mon-stat">
+            <div class="mon-stat-label">Clients</div>
+            <div class="mon-stat-value">${r.clients_connected || 0}<span class="unit">connectés</span></div>
+          </div>
+          <div class="mon-stat">
+            <div class="mon-stat-label">Uptime</div>
+            <div class="mon-stat-value" style="font-size:15px;">${uptimeStr}</div>
+          </div>
+          <div class="mon-stat">
+            <div class="mon-stat-label">RAM utilisée</div>
+            <div class="mon-stat-value">${r.ram_used_percent || 0}<span class="unit">%</span></div>
+          </div>
+          <div class="mon-stat">
+            <div class="mon-stat-label">CPU</div>
+            <div class="mon-stat-value">${r.cpu_load_percent || 0}<span class="unit">%</span></div>
+          </div>
+        </div>
+        <div class="mon-meta">
+          <span>📡 ${bwTotal} échangés</span>
+          <span>⏱ Maj il y a ${minutesAgo === 0 ? '<1' : minutesAgo} min</span>
+        </div>
+      </div>`;
+  }
+
+  function renderMonCardOffline(r, minutesAgo) {
+    const lastSeenStr = minutesAgo === null
+      ? 'Jamais'
+      : minutesAgo > 1440
+      ? Math.floor(minutesAgo/1440) + ' jour(s)'
+      : minutesAgo > 60
+      ? Math.floor(minutesAgo/60) + ' heure(s)'
+      : minutesAgo + ' min';
+    return `
+      <div class="mon-card offline">
+        <div class="mon-header">
+          <div>
+            <div class="mon-name">${escapeHtml(r.name)}</div>
+            <div class="mon-name-sub">${escapeHtml(r.ip_address || '—')}</div>
+          </div>
+          <div class="mon-status offline"><span class="dot"></span>Hors ligne</div>
+        </div>
+        <div style="padding:10px 0;color:var(--ink-dim);font-size:12px;line-height:1.5;">
+          ⚠️ Pas de signal depuis <strong>${lastSeenStr}</strong>. Vérifie que la borne est allumée et a accès à internet.
+        </div>
+        <div class="mon-meta">
+          <span>📅 Dernière connexion : ${minutesAgo === null ? 'jamais' : 'il y a ' + lastSeenStr}</span>
+        </div>
+        <div class="mon-actions">
+          <button class="mon-btn" onclick="openMonitoringModal('${r.router_id}', '${escapeAttr(r.name)}')">
+            🔧 Réinstaller le script
+          </button>
+        </div>
+      </div>`;
+  }
+
+  function formatUptime(seconds) {
+    if (!seconds) return '—';
+    const d = Math.floor(seconds / 86400);
+    const h = Math.floor((seconds % 86400) / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    if (d > 0) return `${d}j ${h}h`;
+    if (h > 0) return `${h}h ${m}m`;
+    return `${m} min`;
+  }
+
+  function formatBytes(bytes) {
+    if (!bytes || bytes === 0) return '0 B';
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    let i = 0;
+    while (bytes >= 1024 && i < units.length - 1) {
+      bytes /= 1024;
+      i++;
+    }
+    return bytes.toFixed(1) + ' ' + units[i];
+  }
+
+  async function openMonitoringModal(routerId, routerName) {
+    currentMonRouter = routerId;
+
+    // Récupérer le token de la borne
+    const { data: router, error } = await supa.from('routers').select('*').eq('id', routerId).single();
+    if (error || !router) { alert('Erreur : routeur introuvable.'); return; }
+
+    // Activer le monitoring + démarrer la période d'essai 1 mois
+    const trialEnd = new Date();
+    trialEnd.setMonth(trialEnd.getMonth() + 1);
+
+    await supa.from('routers').update({
+      monitoring_enabled: true,
+      monitoring_started_at: router.monitoring_started_at || new Date().toISOString(),
+      monitoring_paid_until: router.monitoring_paid_until || trialEnd.toISOString()
+    }).eq('id', routerId);
+
+    // Générer le script
+    document.getElementById('monModalRouterName').textContent = routerName;
+    currentMonScript = generateMonitoringScript(router.borne_token, routerName);
+    document.getElementById('monScriptBox').textContent = currentMonScript;
+    document.getElementById('monitoringModal').classList.add('open');
+  }
+
+  function closeMonitoringModal() {
+    document.getElementById('monitoringModal').classList.remove('open');
+    // Rafraîchir le monitoring pour montrer l'état "Inactif → En attente"
+    setTimeout(loadMonitoring, 500);
+  }
+
+  function generateMonitoringScript(token, routerName) {
+    return `# SIKHANE-TECH · Monitoring temps réel
+# Borne : ${routerName}
+# Token : ${token}
+# Ne pas modifier ce script
+
+:local token "${token}"
+:local apikey "${SUPABASE_KEY}"
+:local apiurl "${SUPABASE_URL}/rest/v1/rpc/record_heartbeat"
+
+# Récupérer les stats système
+:local uptime [/system resource get uptime]
+:local uptimeSec 0
+:do {
+  :local d 0; :local h 0; :local m 0; :local s 0
+  :if ([:find \$uptime "d"] >= 0) do={ :set d [:tonum [:pick \$uptime 0 [:find \$uptime "d"]]] }
+  :if ([:find \$uptime "h"] >= 0) do={ :local pos [:find \$uptime "h"]; :local prev ([:find \$uptime "d"] + 1); :if (\$prev < 1) do={ :set prev 0 }; :set h [:tonum [:pick \$uptime \$prev \$pos]] }
+  :if ([:find \$uptime "m"] >= 0) do={ :local pos [:find \$uptime "m"]; :local prev ([:find \$uptime "h"] + 1); :if (\$prev < 1) do={ :set prev 0 }; :set m [:tonum [:pick \$uptime \$prev \$pos]] }
+  :set uptimeSec ((\$d * 86400) + (\$h * 3600) + (\$m * 60))
+} on-error={ :set uptimeSec 0 }
+
+:local clients [:len [/ip hotspot active find]]
+:local ramUsed (([/system resource get total-memory] - [/system resource get free-memory]) * 100 / [/system resource get total-memory])
+:local cpuLoad [/system resource get cpu-load]
+:local rosVer [/system resource get version]
+
+# Récupérer les bytes WAN (ether1 par défaut)
+:local wanRx 0
+:local wanTx 0
+:do {
+  :set wanRx [/interface get [find name="ether1"] rx-byte]
+  :set wanTx [/interface get [find name="ether1"] tx-byte]
+} on-error={ }
+
+# Préparer le payload JSON
+:local body "{\\"p_token\\":\\"\$token\\",\\"p_uptime\\":\$uptimeSec,\\"p_clients\\":\$clients,\\"p_wan_rx\\":\$wanRx,\\"p_wan_tx\\":\$wanTx,\\"p_ram\\":\$ramUsed,\\"p_cpu\\":\$cpuLoad,\\"p_ros_version\\":\\"\$rosVer\\"}"
+
+# Envoyer le heartbeat
+:do {
+  /tool fetch url=\$apiurl http-method=post http-header-field="apikey: \$apikey,Content-Type: application/json,Authorization: Bearer \$apikey" http-data=\$body output=none
+} on-error={
+  :log warning "SIKHANE heartbeat: erreur d'envoi"
+}`;
+  }
+
+  function copyMonitoringScript() {
+    if (!currentMonScript) return;
+    navigator.clipboard.writeText(currentMonScript).then(() => {
+      const toast = document.createElement('div');
+      toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid var(--green);color:var(--green);padding:10px 18px;font-family:var(--mono);font-size:12px;border-radius:2px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.4);';
+      toast.textContent = '✓ Script copié — colle-le dans Winbox';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    });
+  }
+
+  function downloadMonitoringScript() {
+    if (!currentMonScript) return;
+    const blob = new Blob([currentMonScript], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sikhane-heartbeat.rsc';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 </script>
+
+<!-- ===== MODAL MONITORING INSTALL ===== -->
+<div class="modal-overlay" id="monitoringModal">
+  <div class="modal-content" style="max-width:600px;">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title">📡 Activer le monitoring</div>
+        <div class="modal-sub" id="monModalRouterName">—</div>
+      </div>
+      <button class="modal-close" onclick="closeMonitoringModal()">×</button>
+    </div>
+    <div class="modal-body">
+
+      <div style="background:rgba(70,217,124,0.06);border:1px solid var(--green-dim);border-radius:2px;padding:12px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:32px;height:32px;background:var(--green);color:#001008;border-radius:50%;display:grid;place-items:center;font-weight:800;">🎁</div>
+          <div>
+            <div style="font-weight:600;font-size:14px;">1 mois gratuit</div>
+            <div style="font-size:11px;color:var(--ink-dim);">Activation immédiate · puis 2 000 FCFA/mois</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-family:var(--mono);font-size:11px;color:var(--ink-dim);margin-bottom:8px;letter-spacing:0.15em;text-transform:uppercase;">Étapes d'installation</div>
+
+      <div class="install-step">
+        <div class="install-step-num">1</div>
+        <div class="install-step-txt">Ouvre <strong>Winbox</strong> et connecte-toi à ta borne Mikrotik</div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">2</div>
+        <div class="install-step-txt">Va dans le menu <code>System</code> → <code>Scripts</code></div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">3</div>
+        <div class="install-step-txt">Clique <code>+</code> puis copie-colle le script ci-dessous dans le champ <strong>Source</strong>. Nom : <code>sikhane-heartbeat</code></div>
+      </div>
+      <div class="install-step">
+        <div class="install-step-num">4</div>
+        <div class="install-step-txt">Va dans <code>System</code> → <code>Scheduler</code>, clique <code>+</code>, nom : <code>sikhane-mon</code>, interval : <code>5m</code>, on-event : <code>/system script run sikhane-heartbeat</code></div>
+      </div>
+
+      <div style="font-family:var(--mono);font-size:11px;color:var(--ink-dim);margin:18px 0 6px;letter-spacing:0.15em;text-transform:uppercase;">Script à copier</div>
+
+      <div class="install-script-box" id="monScriptBox">Chargement...</div>
+
+      <div style="display:flex;gap:8px;">
+        <button class="mon-btn primary" onclick="copyMonitoringScript()" style="flex:1;">📋 Copier le script</button>
+        <button class="mon-btn" onclick="downloadMonitoringScript()" style="flex:1;">💾 Télécharger .rsc</button>
+      </div>
+
+      <div style="background:rgba(245,197,66,0.06);border:1px solid rgba(245,197,66,0.2);border-radius:2px;padding:10px;margin-top:16px;font-size:11px;color:var(--ink-dim);line-height:1.5;">
+        💡 <strong>Tip</strong> : 5 minutes après installation, la borne apparaîtra "EN LIGNE" dans le monitoring avec ses stats temps réel.
+      </div>
+
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
